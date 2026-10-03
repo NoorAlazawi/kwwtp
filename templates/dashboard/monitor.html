@@ -1,0 +1,220 @@
+{% load static %}
+{% load cachebust %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شاشة المراقبة — {{ sel_clarifier.label }}</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%233b9db0'/><path d='M16 6C11 12 9 15 9 19a7 7 0 0 0 14 0c0-4-2-7-7-13z' fill='%23fff'/></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Oxanium:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e1b24; --bg2:#13242f; --card:#16293540; --line:rgba(120,190,215,.14);
+  --ink:#eaf6fb; --ink2:#9fc0ce; --ink3:#6f93a2; --teal:#3fd0e0; --tealD:#2bb8c9;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cairo',sans-serif;background:
+  radial-gradient(1200px 600px at 80% -10%, rgba(63,208,224,.10), transparent 60%),
+  radial-gradient(900px 500px at 0% 110%, rgba(43,184,201,.08), transparent 60%),
+  linear-gradient(160deg,#0b1720,#0e1b24 50%,#102733);
+  color:var(--ink);min-height:100vh;padding:20px;overflow-x:hidden}
+
+/* الشريط العلوي */
+.mon-top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:16px 22px;border-radius:20px;margin-bottom:18px;
+  background:linear-gradient(180deg,rgba(26,48,60,.75),rgba(16,34,44,.6));
+  border:1px solid var(--line);backdrop-filter:blur(8px);
+  box-shadow:0 18px 50px rgba(0,0,0,.35)}
+.mon-brand{display:flex;align-items:center;gap:14px}
+.mon-logo{width:50px;height:50px;border-radius:14px;display:grid;place-items:center;flex:none;
+  background:linear-gradient(135deg,var(--teal),var(--tealD));box-shadow:0 0 26px rgba(63,208,224,.5)}
+.mon-logo svg{width:26px;height:26px}
+.mon-brand h1{font-size:19px;font-weight:800;letter-spacing:.3px}
+.mon-brand span{font-size:12px;color:var(--ink2);font-weight:600}
+.mon-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.mon-clock{font-family:'Oxanium';font-weight:700;font-size:22px;letter-spacing:1px;color:var(--teal);
+  text-shadow:0 0 18px rgba(63,208,224,.45)}
+.mon-clock .d{font-size:11px;color:var(--ink3);display:block;text-align:center;letter-spacing:.5px}
+.mon-status{display:inline-flex;align-items:center;gap:9px;padding:9px 16px;border-radius:30px;font-weight:800;font-size:13px}
+.mon-status .d{width:11px;height:11px;border-radius:50%;animation:mpulse 1.6s infinite}
+.mon-status.ok{color:#5de6b0;background:rgba(18,185,129,.14);border:1px solid rgba(93,230,176,.3)}
+.mon-status.ok .d{background:#5de6b0;box-shadow:0 0 12px #5de6b0}
+.mon-status.warning{color:#ffc95a;background:rgba(245,165,36,.14);border:1px solid rgba(255,201,90,.3)}
+.mon-status.warning .d{background:#ffc95a;box-shadow:0 0 12px #ffc95a}
+.mon-status.critical{color:#ff7a92;background:rgba(242,84,91,.16);border:1px solid rgba(255,122,146,.35)}
+.mon-status.critical .d{background:#ff7a92;box-shadow:0 0 14px #ff7a92}
+@keyframes mpulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+.mon-basins{display:flex;gap:7px;flex-wrap:wrap}
+.mon-chip{text-decoration:none;font-family:'Oxanium';font-weight:700;font-size:13px;
+  padding:8px 13px;border-radius:11px;color:var(--ink2);
+  background:rgba(255,255,255,.04);border:1px solid var(--line);transition:.15s}
+.mon-chip:hover{color:var(--ink);border-color:rgba(63,208,224,.4)}
+.mon-chip.on{color:#07222a;background:linear-gradient(135deg,var(--teal),var(--tealD));
+  border-color:transparent;box-shadow:0 0 20px rgba(63,208,224,.4)}
+.mon-tools{display:flex;gap:8px}
+.mon-btn{display:inline-flex;align-items:center;gap:7px;cursor:pointer;text-decoration:none;
+  padding:9px 14px;border-radius:11px;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--ink2);
+  background:rgba(255,255,255,.04);border:1px solid var(--line);transition:.15s}
+.mon-btn:hover{color:var(--ink);border-color:rgba(63,208,224,.4)}
+.mon-btn svg{width:15px;height:15px}
+
+/* الشبكة */
+.mon-grid{display:grid;grid-template-columns:1.15fr 1.5fr;gap:18px}
+@media (max-width:1050px){.mon-grid{grid-template-columns:1fr}}
+.mon-panel{padding:22px;border-radius:20px;
+  background:linear-gradient(180deg,rgba(24,44,56,.6),rgba(14,30,40,.5));
+  border:1px solid var(--line);backdrop-filter:blur(8px);box-shadow:0 16px 44px rgba(0,0,0,.3)}
+.mon-panel h2{font-size:16px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:9px}
+.mon-panel h2 svg{width:19px;height:19px;color:var(--teal)}
+.mon-panel .sub{font-size:12px;color:var(--ink3);margin-bottom:20px}
+
+/* الفهارس المركّبة — حلقات كبيرة */
+.mon-rings{display:flex;gap:16px;justify-content:space-around;flex-wrap:wrap}
+.mon-ring{text-align:center}
+.mon-ring .rw{position:relative;width:130px;height:130px;margin:0 auto}
+.mon-ring svg{transform:rotate(-90deg)}
+.mon-ring .rv{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.mon-ring .rv b{font-family:'Oxanium';font-size:34px;font-weight:800;line-height:1}
+.mon-ring .rv s{font-size:11px;color:var(--ink3);text-decoration:none;margin-top:2px}
+.mon-ring .rn{margin-top:10px;font-size:13px;font-weight:800;color:var(--ink)}
+.mon-ring .rs{font-size:11px;font-weight:700;margin-top:2px}
+.mon-score{margin-top:22px;padding:16px;border-radius:16px;text-align:center;
+  background:linear-gradient(135deg,rgba(63,208,224,.12),rgba(63,208,224,.03));
+  border:1px solid rgba(63,208,224,.22)}
+.mon-score span{font-size:12.5px;color:var(--ink2);font-weight:700}
+.mon-score .v{font-family:'Oxanium';font-size:40px;font-weight:800;color:var(--teal);
+  text-shadow:0 0 22px rgba(63,208,224,.4);line-height:1.1}
+.mon-score .v small{font-size:16px;color:var(--ink3)}
+
+/* مقارنة الأداء — أقواس */
+.mon-arcs{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+@media (max-width:860px){.mon-arcs{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.mon-arcs{grid-template-columns:repeat(2,1fr)}}
+.mon-arc{text-align:center;padding:14px 8px;border-radius:16px;
+  background:rgba(255,255,255,.03);border:1px solid var(--line)}
+.mon-arc svg{width:100%;height:auto}
+.mon-arc .needle{transform-box:view-box;transform-origin:0 0}
+.mon-arc .al{font-family:'Oxanium';font-weight:800;font-size:15px;color:var(--ink2);margin-top:4px}
+.mon-arc .av{font-family:'Oxanium';font-weight:800;font-size:22px;margin-top:2px}
+.mon-arc .ar{font-size:10px;color:var(--ink3);margin-top:3px}
+
+.mon-empty{text-align:center;padding:80px 20px;color:var(--ink3)}
+.mon-foot{text-align:center;margin-top:20px;font-size:11.5px;color:var(--ink3)}
+.mon-foot b{color:var(--ink2)}
+</style>
+</head>
+<body>
+{% if not latest %}
+  <div class="mon-top"><div class="mon-brand"><div class="mon-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#07222a" stroke-width="2.3" stroke-linecap="round"><path d="M12 2C7 8 5 11 5 15a7 7 0 0 0 14 0c0-4-2-7-7-13z"/></svg></div><div><h1>شاشة المراقبة</h1><span>مجاري كربلاء المقدسة</span></div></div></div>
+  <div class="mon-empty">لا توجد بيانات لعرضها بعد.</div>
+{% else %}
+<div class="mon-top">
+  <div class="mon-brand">
+    <div class="mon-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#07222a" stroke-width="2.3" stroke-linecap="round"><path d="M12 2C7 8 5 11 5 15a7 7 0 0 0 14 0c0-4-2-7-7-13z"/></svg></div>
+    <div>
+      <h1>شاشة مراقبة الأداء — {{ sel_clarifier.label }}</h1>
+      <span>{{ sel_clarifier.plant.name }} · قراءة يوم {{ latest.date|date:'Y/m/d' }}</span>
+    </div>
+  </div>
+  <div class="mon-meta">
+    <div class="mon-status {{ overall }}">
+      <span class="d"></span>
+      {% if overall == 'critical' %}حالة حرجة · {{ n_crit }} إنذار{% elif overall == 'warning' %}تحذير · {{ n_alarms }} تنبيه{% else %}تشغيل طبيعي{% endif %}
+    </div>
+    <div class="mon-clock" id="clock">--:--:--<span class="d" id="cdate">—</span></div>
+  </div>
+</div>
+
+<div class="mon-top" style="padding:12px 18px;margin-bottom:18px">
+  <div class="mon-basins">
+    {% for c in clarifiers %}
+    <a href="?clarifier={{ c.number }}" class="mon-chip {% if c.number == sel_clarifier.number %}on{% endif %}">{{ c.label }}</a>
+    {% endfor %}
+  </div>
+  <div class="mon-tools">
+    <a href="{% url 'dashboard' %}?clarifier={{ sel_clarifier.number }}" class="mon-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+      اللوحة الكاملة
+    </a>
+    <button class="mon-btn" id="fsBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+      ملء الشاشة
+    </button>
+  </div>
+</div>
+
+<div class="mon-grid">
+  <!-- الفهارس المركّبة -->
+  <div class="mon-panel">
+    <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> الفهارس المركّبة</h2>
+    <div class="sub">الصحة · الاستقرار · المخاطر</div>
+    <div class="mon-rings">
+      {% for g in gauges %}
+      <div class="mon-ring">
+        <div class="rw">
+          <svg width="130" height="130" viewBox="0 0 104 104">
+            <circle cx="52" cy="52" r="44" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="10"/>
+            <circle cx="52" cy="52" r="44" fill="none" stroke="{{ g.color }}" stroke-width="10" stroke-linecap="round"
+                    stroke-dasharray="276.46" stroke-dashoffset="{{ g.offset }}"
+                    style="filter:drop-shadow(0 0 6px {{ g.color }})"/>
+          </svg>
+          <div class="rv"><b style="color:{{ g.color }}">{{ g.value|default:"—" }}</b><s>/ 100</s></div>
+        </div>
+        <div class="rn">{{ g.label }}</div>
+        <div class="rs" style="color:{{ g.text }}">{{ g.status }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="mon-score">
+      <span>تقييم حوض الترسيب الثانوي</span>
+      <div class="v">{{ s.operator_score|floatformat:0 }}<small> / 100</small></div>
+    </div>
+  </div>
+
+  <!-- مقارنة الأداء مع القيم التصميمية -->
+  <div class="mon-panel">
+    <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg> مقارنة الأداء مع القيم التصميمية</h2>
+    <div class="sub">المؤشرات الهيدروليكية والتحميل</div>
+    <div class="mon-arcs">
+      {% for a in arc_gauges %}
+      <div class="mon-arc">
+        <svg viewBox="0 0 120 66">
+          <path d="M10 55 A50 50 0 0 1 110 55" fill="none" stroke="rgba(120,180,220,.12)" stroke-width="9" stroke-linecap="round"/>
+          <path d="M10 55 A50 50 0 0 1 110 55" fill="none" stroke="{{ a.color }}" stroke-width="9" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="{% widthratio a.angle 180 157 as f %}{{ f }}" style="filter:drop-shadow(0 0 4px {{ a.color }})"/>
+          <line class="needle" x1="60" y1="55" x2="60" y2="16" stroke="#eaf6fb" stroke-width="2.5" stroke-linecap="round" transform="rotate({{ a.angle|add:'-90' }} 60 55)"/>
+          <circle cx="60" cy="55" r="4.5" fill="#eaf6fb"/>
+        </svg>
+        <div class="al">{{ a.label }}</div>
+        <div class="av" style="color:{{ a.color }}">{{ a.value }}</div>
+        <div class="ar">({{ a.range }}) {{ a.unit }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="mon-foot">آخر تحديث للبيانات: <b>{{ latest.date|date:'Y/m/d' }}</b> · الشاشة تُحدَّث تلقائياً كل ٣٠ ثانية</div>
+
+<script>
+// ساعة حيّة
+function tick(){
+  const n=new Date();
+  const p=x=>String(x).padStart(2,'0');
+  document.getElementById('clock').childNodes[0].nodeValue = p(n.getHours())+':'+p(n.getMinutes())+':'+p(n.getSeconds());
+  const days=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  document.getElementById('cdate').textContent = days[n.getDay()]+' '+p(n.getDate())+'/'+p(n.getMonth()+1)+'/'+n.getFullYear();
+}
+tick(); setInterval(tick,1000);
+// ملء الشاشة
+document.getElementById('fsBtn').addEventListener('click',()=>{
+  if(!document.fullscreenElement){ document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen(); }
+  else { document.exitFullscreen&&document.exitFullscreen(); }
+});
+// تحديث تلقائي كل 30 ثانية
+setTimeout(()=>location.reload(), 30000);
+</script>
+{% endif %}
+</body>
+</html>

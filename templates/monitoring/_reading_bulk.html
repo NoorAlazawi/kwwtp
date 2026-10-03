@@ -1,0 +1,40 @@
+{% if form.non_field_errors %}<div class="msg error">{{ form.non_field_errors }}</div>{% endif %}
+{% if no_blanket %}<div class="msg error">أدخل طبقة الحمأة لحوضٍ واحد على الأقل.</div>{% endif %}
+
+<div class="bulk-sec">
+  <div class="bulk-sec-h">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 9l-5 5-3-3-4 4"/></svg>
+    القيم المشتركة لكل الأحواض
+    <small>تُدخَل مرّة واحدة — تُطبَّق على الأحواض الثمانية</small>
+  </div>
+  <div class="form-grid">
+    {% for field in form %}
+    <div class="field">
+      <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span class="req">*</span>{% endif %}</label>
+      {{ field }}
+      {% if field.widget.attrs.placeholder %}{% endif %}
+      {% if field.name == 'flow_q' %}<div class="hint">{{ field.help_text }}التصريف الكلّي للمحطة — يُقسَّم على عدد الأحواض تلقائياً</div>{% endif %}
+      {% if field.errors %}<div class="err">{{ field.errors|striptags }}</div>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="bulk-sec">
+  <div class="bulk-sec-h">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
+    طبقة الحمأة لكل حوض <small>(م) — القيمة المختلفة بين الأحواض</small>
+  </div>
+  <div class="blanket-grid">
+    {% for c in clarifiers %}
+    <div class="bk-item">
+      <span class="bk-dot" style="background:{{ c.ui_color }}"></span>
+      <label for="blanket_{{ c.number }}">{{ c.label }}</label>
+      <input type="number" step="0.01" min="0" name="blanket_{{ c.number }}"
+             id="blanket_{{ c.number }}" class="ginput bk-input" placeholder="م"
+             value="{{ request.POST|default_if_none:'' }}">
+      {% if blank_errors %}{% for num, e in blank_errors.items %}{% if num == c.number %}<div class="err">{{ e }}</div>{% endif %}{% endfor %}{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>

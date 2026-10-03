@@ -1,0 +1,285 @@
+{% load static %}
+{% load cachebust %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}نظام مراقبة أحواض الترسيب{% endblock %}</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%233b9db0'/><path d='M16 6C11 12 9 15 9 19a7 7 0 0 0 14 0c0-4-2-7-7-13z' fill='%23fff'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Oxanium:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static_v 'css/app.css' %}">
+{% block head %}{% endblock %}
+</head>
+<body>
+<div class="wrap">
+{% block body %}
+<div class="layout">
+  <!-- الشريط الجانبي -->
+  <aside class="sidebar glass">
+    <div class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">
+          <path d="M12 2C7 8 5 11 5 15a7 7 0 0 0 14 0c0-4-2-7-7-13z"/>
+        </svg>
+      </div>
+      <div>
+        <h1>مراقبة الأحواض</h1>
+        <span>مجاري كربلاء المقدسة</span>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        لوحة المراقبة
+      </a>
+      <a href="{% url 'reading_create' %}" class="js-new-reading">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        إدخال قراءة يومية
+      </a>
+      <a href="{% url 'reading_list' %}" class="{% if request.resolver_match.url_name == 'reading_list' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+        سجلّ القراءات
+      </a>
+      <a href="{% url 'monitor_screen' %}" class="{% if request.resolver_match.url_name == 'monitor_screen' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        شاشة المراقبة
+      </a>
+      {% if user.is_staff or user.is_supervisor or user.is_superuser %}
+      <a href="{% url 'user_list' %}" class="{% if request.resolver_match.url_name == 'user_list' or request.resolver_match.url_name == 'user_create' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        المستخدمون
+      </a>
+      {% endif %}
+      <a href="{% url 'password_change' %}" class="{% if request.resolver_match.url_name == 'password_change' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        تغيير كلمة المرور
+      </a>
+      <a href="/admin/">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.5-2.4 1a7 7 0 0 0-1.7-1l-.3-2.5h-4l-.3 2.5a7 7 0 0 0-1.7 1l-2.4-1-2 3.5 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.5 2.4-1a7 7 0 0 0 1.7 1l.3 2.5h4l.3-2.5a7 7 0 0 0 1.7-1l2.4 1 2-3.5-2-1.5c.06-.33.1-.66.1-1z"/></svg>
+        الإعدادات والحدود
+      </a>
+    </nav>
+
+    <div class="foot">
+      <div class="user-chip">
+        <div class="av">{{ user.get_full_name|default:user.username|first|upper }}</div>
+        <div>
+          <div style="font-weight:700">{{ user.get_full_name|default:user.username }}</div>
+          <div style="color:var(--ink-3);font-size:11px">{{ user.get_role_display }}</div>
+        </div>
+      </div>
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button class="logout" type="submit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          تسجيل الخروج
+        </button>
+      </form>
+    </div>
+  </aside>
+
+  <!-- المحتوى -->
+  <main class="main">
+    {% if messages %}
+      {% for m in messages %}
+        <div class="msg {{ m.tags }}">{{ m }}</div>
+      {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}
+</div>
+
+<!-- نافذة إدخال/تعديل القراءة (منبثقة) -->
+<div class="modal-overlay" id="readingModal" aria-hidden="true">
+  <div class="modal-card glass" role="dialog" aria-modal="true" aria-labelledby="rmTitle">
+    <div class="modal-head">
+      <div class="mh-title">
+        <span class="mh-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        </span>
+        <div>
+          <h3 id="rmTitle">إدخال قراءة يومية جديدة</h3>
+          <p class="cap">تُحسب المؤشرات والتشخيص تلقائياً بعد الحفظ</p>
+        </div>
+      </div>
+      <button type="button" class="modal-x" id="rmClose" aria-label="إغلاق">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <form id="readingForm" method="post" action="{% url 'reading_bulk_create' %}">
+      {% csrf_token %}
+      <div class="modal-body" id="rmBody">
+        <div class="rm-loading"><span class="spinner"></span> جارٍ التحميل…</div>
+      </div>
+      <div class="modal-foot">
+        <button type="submit" class="btn btn-primary" id="rmSubmit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+          حفظ ومعالجة
+        </button>
+        <button type="button" class="btn btn-ghost" id="rmCancel">إلغاء</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- حاوية الإشعارات المنبثقة (أعلى اليسار) -->
+<div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
+
+<script>
+(function(){
+  const modal = document.getElementById('readingModal');
+  const body  = document.getElementById('rmBody');
+  const form  = document.getElementById('readingForm');
+  const title = document.getElementById('rmTitle');
+  const submitBtn = document.getElementById('rmSubmit');
+  if(!modal) return;
+  const formUrl = "{% url 'reading_form' %}";
+
+  function openModal(){ modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
+  function closeModal(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
+
+  async function load(pk){
+    body.innerHTML = '<div class="rm-loading"><span class="spinner"></span> جارٍ التحميل…</div>';
+    submitBtn.disabled = true;
+    openModal();
+    try{
+      const url = pk ? (formUrl + '?pk=' + pk) : formUrl;
+      const res = await fetch(url, {headers:{'X-Requested-With':'XMLHttpRequest'}});
+      const data = await res.json();
+      body.innerHTML = data.html;
+      form.action = data.action;
+      title.textContent = data.title;
+      submitBtn.disabled = false;
+      const first = body.querySelector('input,select,textarea'); if(first) first.focus();
+    }catch(e){ body.innerHTML = '<div class="msg error">تعذّر تحميل النموذج.</div>'; }
+  }
+
+  document.addEventListener('click', function(e){
+    const nw = e.target.closest('.js-new-reading');
+    if(nw){ e.preventDefault(); load(null); return; }
+    const ed = e.target.closest('.js-edit-reading');
+    if(ed){ e.preventDefault(); load(ed.dataset.pk); return; }
+  });
+
+  document.getElementById('rmClose').addEventListener('click', closeModal);
+  document.getElementById('rmCancel').addEventListener('click', closeModal);
+  modal.addEventListener('click', e=>{ if(e.target===modal) closeModal(); });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape' && modal.classList.contains('open')) closeModal(); });
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    submitBtn.disabled = true;
+    const original = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span class="spinner"></span> جارٍ الحفظ…';
+    try{
+      const res = await fetch(form.action, {
+        method:'POST',
+        headers:{'X-Requested-With':'XMLHttpRequest'},
+        body: new FormData(form),
+      });
+      const data = await res.json();
+      if(data.ok){
+        // خزّن ملخّص الإنذارات ليُعرض كإشعار بعد إعادة التحميل
+        const s = data.summary;
+        if(s){ try{ sessionStorage.setItem('pendingToast', JSON.stringify(s)); }catch(e){} }
+        closeModal();
+        // حالة حرجة (أو تحذير): الانتقال مباشرة إلى الحوض المتأثّر وقسم التنبيهات
+        if(s && (s.level==='critical' || s.level==='warning') && s.focus_clarifier){
+          try{ sessionStorage.setItem('gotoAlerts','1'); }catch(e){}
+          const end = s.focus_date ? ('&end='+s.focus_date) : '';
+          window.location.href = '/?clarifier=' + s.focus_clarifier + end;
+        } else {
+          location.reload();
+        }
+      }
+      else { body.innerHTML = data.html; submitBtn.disabled=false; submitBtn.innerHTML=original;
+             const f=body.querySelector('input,select'); if(f) f.focus(); }
+    }catch(err){ submitBtn.disabled=false; submitBtn.innerHTML=original; }
+  });
+})();
+
+/* ===== الإشعارات المنبثقة + صوت التحذير ===== */
+(function(){
+  const wrap = document.getElementById('toastWrap');
+  if(!wrap) return;
+
+  function beep(level){
+    try{
+      const Ac = window.AudioContext || window.webkitAudioContext; if(!Ac) return;
+      const ctx = new Ac();
+      const seq = level==='critical' ? [[880,0],[660,0.18],[880,0.36]] : [[660,0]];
+      seq.forEach(([freq,at])=>{
+        const o=ctx.createOscillator(), g=ctx.createGain();
+        o.type='sine'; o.frequency.value=freq;
+        o.connect(g); g.connect(ctx.destination);
+        const t=ctx.currentTime+at;
+        g.gain.setValueAtTime(0.0001,t);
+        g.gain.exponentialRampToValueAtTime(0.25,t+0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001,t+0.16);
+        o.start(t); o.stop(t+0.18);
+      });
+      setTimeout(()=>ctx.close&&ctx.close(), 1200);
+    }catch(e){}
+  }
+
+  const ICON = {
+    critical:'<path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>',
+    warning:'<path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>',
+    ok:'<path d="M9 12l2 2 4-4M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z"/>'
+  };
+
+  function showToast(s){
+    const level = s.level || 'ok';
+    let title, lines=[];
+    if(level==='critical'){ title = `إنذار حرج — ${s.crit} حالة تحتاج معالجة فورية`; }
+    else if(level==='warning'){ title = `تحذير — ${s.warn} حالة تحتاج متابعة`; }
+    else { title = 'تم الحفظ — كل المؤشرات ضمن المدى الطبيعي'; }
+    (s.items||[]).forEach(it=>{ lines.push(`${it.basin} · ${it.param}`); });
+    const n = document.createElement('div');
+    n.className = 'toast '+level;
+    n.innerHTML = `
+      <div class="toast-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICON[level]}</svg></div>
+      <div class="toast-body">
+        <b>${title}</b>
+        ${s.saved?`<span class="toast-meta">حُفظت ${s.saved} قراءة · ${s.date||''}</span>`:''}
+        ${lines.length?`<ul>${lines.slice(0,4).map(l=>`<li>${l}</li>`).join('')}</ul>`:''}
+      </div>
+      <button class="toast-x" aria-label="إغلاق">&times;</button>`;
+    wrap.appendChild(n);
+    requestAnimationFrame(()=>n.classList.add('in'));
+    const close=()=>{ n.classList.remove('in'); setTimeout(()=>n.remove(),300); };
+    n.querySelector('.toast-x').addEventListener('click', close);
+    setTimeout(close, level==='critical' ? 9000 : 6000);
+    if(level!=='ok') beep(level);
+  }
+
+  // عرض الإشعار المعلّق بعد إعادة التحميل
+  try{
+    const raw = sessionStorage.getItem('pendingToast');
+    if(raw){ sessionStorage.removeItem('pendingToast'); showToast(JSON.parse(raw)); }
+  }catch(e){}
+
+  // انتقال تلقائي إلى قسم التنبيهات عند حالة حرجة/تحذير بعد الإدخال
+  try{
+    if(sessionStorage.getItem('gotoAlerts')){
+      sessionStorage.removeItem('gotoAlerts');
+      setTimeout(()=>{
+        const el = document.getElementById('alertsSection');
+        if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+      }, 600);
+    }
+  }catch(e){}
+
+  window.showReadingToast = showToast;
+})();
+</script>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

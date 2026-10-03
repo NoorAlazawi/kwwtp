@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}تسجيل الدخول — نظام مراقبة الأحواض{% endblock %}
+
+{% block body %}
+<div class="login-page">
+  <div class="login-card glass">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">
+        <path d="M12 2C7 8 5 11 5 15a7 7 0 0 0 14 0c0-4-2-7-7-13z"/>
+      </svg>
+    </div>
+    <h1>مرحباً بعودتك</h1>
+    <p class="cap">نظام مراقبة أداء أحواض الترسيب الثانوي الذكي</p>
+
+    {% if form.errors %}
+      <div class="login-err">اسم المستخدم أو كلمة المرور غير صحيحة.</div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="field">
+        <label for="id_username">اسم المستخدم</label>
+        <input class="ginput" type="text" name="username" id="id_username" required autofocus>
+      </div>
+      <div class="field">
+        <label for="id_password">كلمة المرور</label>
+        <input class="ginput" type="password" name="password" id="id_password" required>
+      </div>
+      <button class="btn btn-primary" type="submit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+        دخول
+      </button>
+      <input type="hidden" name="next" value="{{ next }}">
+    </form>
+  </div>
+</div>
+{% endblock %}

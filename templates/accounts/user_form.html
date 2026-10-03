@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}مستخدم جديد{% endblock %}
+
+{% block content %}
+<div class="topbar glass">
+  <div>
+    <h2>إضافة مستخدم جديد</h2>
+    <div class="sub">أنشئ حساباً بدور وصلاحيات</div>
+  </div>
+  <a href="{% url 'user_list' %}" class="btn btn-ghost">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+    عودة للقائمة
+  </a>
+</div>
+
+<form method="post" class="card glass" style="max-width:720px">
+  {% csrf_token %}
+  {% if form.non_field_errors %}<div class="msg error">{{ form.non_field_errors }}</div>{% endif %}
+  <div class="form-grid">
+    {% for field in form %}
+    <div class="field">
+      <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span class="req">*</span>{% endif %}</label>
+      {{ field }}
+      {% if field.help_text %}<div class="hint">{{ field.help_text|safe }}</div>{% endif %}
+      {% if field.errors %}<div class="err">{{ field.errors|striptags }}</div>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM19 8v6M22 11h-6"/></svg>
+      إنشاء المستخدم
+    </button>
+    <a href="{% url 'user_list' %}" class="btn btn-ghost">إلغاء</a>
+  </div>
+</form>
+{% endblock %}
