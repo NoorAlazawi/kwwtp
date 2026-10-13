@@ -1,7 +1,3 @@
-"""
-monitoring — المحطة، الأحواض، والقراءات اليومية.
-هذا هو مصدر الإدخال (يقابل ورقة Raw data + plant information في الملف).
-"""
 import math
 from decimal import Decimal
 from django.conf import settings
@@ -10,7 +6,7 @@ from django.db import models
 
 
 class Plant(models.Model):
-    """محطة معالجة. تحمل الثوابت العامة (يقابل ورقة plant information)."""
+    """محطة معالجة تحمل الثوابت العامة."""
     name = models.CharField("اسم المحطة", max_length=120, default="Karbala WWTP")
     process = models.CharField(
         "نوع المعالجة", max_length=120, default="Conventional Activated Sludge"
@@ -62,7 +58,7 @@ class Clarifier(models.Model):
         ordering = ["plant", "number"]
 
     def save(self, *args, **kwargs):
-        # A = π/4 × D²  ،  V = A × SWD   (كما في ورقة plant information)
+        # A = π/4 × D²  ،  V = A × SWD
         d = float(self.diameter_m)
         swd = float(self.side_water_depth)
         area = math.pi / 4 * d * d
@@ -88,8 +84,8 @@ class Clarifier(models.Model):
 
     @property
     def label(self) -> str:
-        """اسم الحوض المختصر: ST-1 ... ST-8."""
-        return f"ST-{self.number}"
+        """اسم الحوض المختصر: SC-1 ... SC-8."""
+        return f"SC-{self.number}"
 
     @property
     def ui_color(self) -> str:
@@ -103,10 +99,7 @@ class Clarifier(models.Model):
 
 
 class DailyReading(models.Model):
-    """
-    قراءة يوم واحد لحوض واحد (يقابل صفاً في ورقة Raw data).
-    كل الحقول هنا مُدخلات خام؛ المؤشرات المشتقّة تُحسب في تطبيق analytics.
-    """
+    """قراءة يوم واحد لحوض واحد — مُدخلات خام فقط."""
     clarifier = models.ForeignKey(
         Clarifier, verbose_name="الحوض", on_delete=models.CASCADE, related_name="readings"
     )
@@ -116,7 +109,6 @@ class DailyReading(models.Model):
         on_delete=models.SET_NULL, null=True, blank=True, related_name="readings",
     )
 
-    # --- المدخلات (بنفس ترتيب أعمدة Raw data) ---
     flow_q = models.DecimalField(
         "التصريف الداخل Q (م³/يوم)", max_digits=12, decimal_places=2,
         validators=[MinValueValidator(0)],

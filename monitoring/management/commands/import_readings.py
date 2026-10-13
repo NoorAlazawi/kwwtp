@@ -42,7 +42,7 @@ FIELD_RULES = [
 COMPUTED_HINTS = ("returnactivatedsludgerate", "wasteactivatedsludgerate",
                   "sludgevolumeindex", "svi", "qrm3", "qwm3")
 DATE_HINTS = ("data", "date", "day")
-CLARIFIER_HINTS = ("clarifier", "basin", "tank", "st-")
+CLARIFIER_HINTS = ("clarifier", "basin", "tank", "st-", "sc-")
 
 
 class Command(BaseCommand):
@@ -118,7 +118,7 @@ class Command(BaseCommand):
                 c, cr = Clarifier.objects.get_or_create(
                     plant=plant, number=num, defaults={"diameter_m": 32, "side_water_depth": 4})
                 if cr:
-                    self.stdout.write(self.style.WARNING(f"أُنشئ حوض ST-{num}."))
+                    self.stdout.write(self.style.WARNING(f"أُنشئ حوض SC-{num}."))
                 clar_cache[num] = c
             return clar_cache[num]
 

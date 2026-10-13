@@ -40,7 +40,7 @@ def dashboard(request):
     if not clarifiers:
         return render(request, "dashboard/dashboard.html", {"latest": None, "clarifiers": []})
 
-    # ------- الفلترة: الحوض المختار + تاريخ نهاية الفترة (7 أيام تنتهي عنده) -------
+    # الفلترة: الحوض المختار وتاريخ نهاية الفترة
     sel_num = request.GET.get("clarifier")
     clarifier = next((c for c in clarifiers if str(c.number) == sel_num), clarifiers[0])
 
@@ -77,7 +77,7 @@ def dashboard(request):
     diagnoses = latest.diagnoses.select_related("parameter").all()
     raw_alarms = latest.alarms.select_related("parameter").filter(acknowledged=False)
 
-    # --- تنبيهات مع نظام التغذية الرجعية (تنبؤ بالحلول عند تكرار المؤشرات) ---
+    # تنبيهات مع التغذية الرجعية (تنبؤ بالحلول عند تكرار المؤشرات)
     from analytics.models import DiagnosisRule, Diagnosis as _Diag
     # حالة كل مؤشر في هذه القراءة (لربط التنبيه بالقاعدة)
     diag_status = {d.parameter_id: d.status for d in diagnoses}
@@ -125,8 +125,8 @@ def dashboard(request):
              **_arc(m.sor, 0, 45, [(0,16,"#f5a524"),(16,28,"#12b981"),(28,999,"#f2545b")])},
             {"label": "SLR", "unit": "kg/m²·h", "range": "4 – 6",
              **_arc(m.slr, 0, 12, [(0,4,"#f5a524"),(4,6,"#12b981"),(6,999,"#f2545b")])},
-            {"label": "HRT", "unit": "hr", "range": "2 – 4",
-             **_arc(m.hrt, 0, 8, [(0,2,"#f5a524"),(2,4,"#12b981"),(4,999,"#f2545b")])},
+            {"label": "HRT", "unit": "hr", "range": "2 – 6",
+             **_arc(m.hrt, 0, 10, [(0,2,"#f5a524"),(2,6,"#12b981"),(6,999,"#f2545b")])},
             {"label": "RAS", "unit": "%", "range": "25 – 75",
              **_arc(latest.ras_percent, 0, 120, [(0,25,"#f5a524"),(25,75,"#12b981"),(75,999,"#f5a524")])},
             {"label": "WAS", "unit": "%", "range": "0.3 – 0.4",
@@ -142,9 +142,9 @@ def dashboard(request):
         ]
 
     blk = float(latest.sludge_blanket)
-    blk_state = ("LOW", "#3b82f6") if blk < 1 else \
-                ("NORMAL", "#12b981") if blk < 3 else \
-                ("HIGH", "#f5a524") if blk < 4 else ("CRITICAL", "#f2545b")
+    blk_state = ("LOW", "#f5a524") if blk < 0.25 else \
+                ("NORMAL", "#12b981") if blk <= 0.9 else \
+                ("HIGH", "#f5a524") if blk <= 1.5 else ("CRITICAL", "#f2545b")
     # نسبة عمق طبقة الحمأة من عمق الحوض (SWD)
     blk_depth_frac = round(min(blk / swd, 0.9), 3)
     # موضع وارتفاع طبقة الحمأة في المقطع (المنطقة المائية y:74..300 = 226px، القاع y=300)
@@ -158,8 +158,9 @@ def dashboard(request):
         period_options.append(d)
         d -= timedelta(days=7)
 
-    # --- نظرة عامة: حالة كل الأحواض في اليوم المختار (end_date) ---
+    # حالة كل الأحواض في اليوم المختار
     basins_overview = []
+    basins_idx = {}   # بيانات الفهارس لكل حوض — للتبديل الفوري عند الاختيار
     for c in clarifiers:
         # قراءة اليوم المختار، أو أقرب قراءة سابقة له
         rd = (DailyReading.objects.filter(clarifier=c, date__lte=end_date)
@@ -171,17 +172,18 @@ def dashboard(request):
         sc = getattr(rd, "scores", None)
         mt = getattr(rd, "metric", None)
         b = float(rd.sludge_blanket)
-        bstate, bcol = (("منخفض", "#4a90d9") if b < 1 else
-                        ("طبيعي", "#28b487") if b < 3 else
-                        ("مرتفع", "#e8a020") if b < 4 else ("حرج", "#e35d75"))
+        bstate, bcol = (("منخفض", "#e8a020") if b < 0.25 else
+                        ("طبيعي", "#28b487") if b <= 0.9 else
+                        ("مرتفع", "#e8a020") if b <= 1.5 else ("حرج", "#e35d75"))
         chi = float(sc.chi) if sc else None
         cri = float(sc.cri) if sc else None
-        # لون البطاقة حسب الصحة العامة (CHI)
-        if chi is None:
+        perf = float(sc.operator_score) if sc and sc.operator_score is not None else None
+        # لون البطاقة حسب الأداء العام
+        if perf is None:
             hcol = "#8a9bb2"
-        elif chi >= 85:
+        elif perf >= 85:
             hcol = "#28b487"
-        elif chi >= 70:
+        elif perf >= 70:
             hcol = "#e8a020"
         else:
             hcol = "#e35d75"
@@ -189,6 +191,7 @@ def dashboard(request):
         basins_overview.append({
             "number": c.number, "label": c.label, "color": c.ui_color,
             "has_data": True, "date": rd.date,
+            "perf": round(perf) if perf is not None else None,
             "chi": round(chi) if chi is not None else None, "hcol": hcol,
             "cri": round(cri) if cri is not None else None,
             "svi": round(float(mt.svi)) if mt else None,
@@ -196,11 +199,23 @@ def dashboard(request):
             "alarms": n_alarms,
             "is_selected": c.number == clarifier.number,
         })
+        if sc:
+            gc = _gauge(sc.chi, good=True)
+            gs = _gauge(sc.csi, good=True) if sc.csi is not None else _gauge(None)
+            gr = _gauge(sc.cri, good=False)
+            basins_idx[c.number] = {
+                "chi": {"v": gc["value"], "o": gc["offset"], "c": gc["color"], "t": gc["text"], "s": sc.chi_status or "—"},
+                "csi": {"v": gs["value"], "o": gs["offset"], "c": gs["color"], "t": gs["text"], "s": sc.csi_status or "—"},
+                "cri": {"v": gr["value"], "o": gr["offset"], "c": gr["color"], "t": gr["text"], "s": sc.cri_level or "—"},
+                "op": round(perf) if perf is not None else None,
+                "name": c.label,
+            }
 
     context = {
         "latest": latest, "m": m, "s": s, "diagnoses": diagnoses, "alarms": alarms,
         "gauges": gauges, "arc_gauges": arc_gauges, "anim_json": json.dumps(anim),
-        "blk_pct": round(min(blk / 6 * 100, 100), 1),
+        "basins_idx": basins_idx,
+        "blk_pct": round(min(blk / 2 * 100, 100), 1),
         "blk_state": blk_state[0], "blk_color": blk_state[1],
         "blk_depth_frac": blk_depth_frac, "swd": swd,
         "sludge_h": sludge_h, "sludge_y": sludge_y,
@@ -219,55 +234,67 @@ def dashboard(request):
 
 @login_required
 def monitor_screen(request):
-    """شاشة مراقبة منفصلة: الفهارس المركّبة + مقارنة الأداء فقط (عرض حائطي احترافي)."""
+    """شاشة مراقبة حائطية موحّدة: الأحواض الثمانية معاً ليوم مختار (افتراضياً اليوم)."""
     from datetime import date as _date
     clarifiers = list(Clarifier.objects.select_related("plant").order_by("number"))
     if not clarifiers:
-        return render(request, "dashboard/monitor.html", {"latest": None, "clarifiers": []})
-    sel_num = request.GET.get("clarifier")
-    clarifier = next((c for c in clarifiers if str(c.number) == sel_num), clarifiers[0])
+        return render(request, "dashboard/monitor.html", {"has_data": False, "clarifiers": []})
 
-    qs = DailyReading.objects.filter(clarifier=clarifier)
-    # افتراضياً اليوم الحالي وإلا أحدث قراءة
-    today = _date.today()
-    latest = (qs.filter(date__lte=today).select_related("metric", "scores").order_by("-date").first()
-              or qs.select_related("metric", "scores").order_by("-date").first())
-    if not latest:
+    all_dates = list(DailyReading.objects.order_by("date").values_list("date", flat=True).distinct())
+    if not all_dates:
         return render(request, "dashboard/monitor.html",
-                      {"latest": None, "clarifiers": clarifiers, "sel_clarifier": clarifier})
+                      {"has_data": False, "clarifiers": clarifiers})
+    min_date, max_date = all_dates[0], all_dates[-1]
 
-    m = getattr(latest, "metric", None)
-    s = getattr(latest, "scores", None)
-    arc_gauges = []
-    if m:
-        arc_gauges = [
-            {"label": "SOR", "unit": "m³/m²·d", "range": "16 – 28",
-             **_arc(m.sor, 0, 45, [(0,16,"#f5a524"),(16,28,"#12b981"),(28,999,"#f2545b")])},
-            {"label": "SLR", "unit": "kg/m²·h", "range": "4 – 6",
-             **_arc(m.slr, 0, 12, [(0,4,"#f5a524"),(4,6,"#12b981"),(6,999,"#f2545b")])},
-            {"label": "HRT", "unit": "hr", "range": "2 – 4",
-             **_arc(m.hrt, 0, 8, [(0,2,"#f5a524"),(2,4,"#12b981"),(4,999,"#f2545b")])},
-            {"label": "RAS", "unit": "%", "range": "25 – 75",
-             **_arc(latest.ras_percent, 0, 120, [(0,25,"#f5a524"),(25,75,"#12b981"),(75,999,"#f5a524")])},
-            {"label": "WAS", "unit": "%", "range": "0.3 – 0.4",
-             **_arc(latest.was_percent, 0, 1, [(0,0.3,"#f5a524"),(0.3,0.4,"#12b981"),(0.4,999,"#f2545b")])},
-        ]
-    gauges = []
-    if s:
-        gauges = [
-            {"label": "CHI الصحة", "status": s.chi_status, **_gauge(s.chi, good=True)},
-            {"label": "CSI الاستقرار", "status": s.csi_status or "—", **_gauge(s.csi, good=True)},
-            {"label": "CRI المخاطر", "status": s.cri_level, **_gauge(s.cri, good=False)},
-        ]
-    n_alarms = latest.alarms.filter(acknowledged=False).count()
-    n_crit = latest.alarms.filter(acknowledged=False, level="critical").count()
-    overall = "critical" if n_crit else ("warning" if n_alarms else "ok")
+    today = _date.today()
+    date_str = request.GET.get("date")
+    try:
+        sel_date = _date.fromisoformat(date_str) if date_str else today
+    except (ValueError, TypeError):
+        sel_date = today
+    sel_date = max(min_date, min(sel_date, max_date))
+
+    plant = clarifiers[0].plant
+    basins, tot_crit, tot_warn, n_ok = [], 0, 0, 0
+    for c in clarifiers:
+        rd = (DailyReading.objects.filter(clarifier=c, date__lte=sel_date)
+              .select_related("metric", "scores").order_by("-date").first())
+        if not rd:
+            basins.append({"number": c.number, "label": c.label, "color": c.ui_color, "has_data": False})
+            continue
+        sc = getattr(rd, "scores", None)
+        mt = getattr(rd, "metric", None)
+        b = float(rd.sludge_blanket)
+        bstate, bcol = (("منخفض", "#e8a020") if b < 0.25 else
+                        ("طبيعي", "#28b487") if b <= 0.9 else
+                        ("مرتفع", "#e8a020") if b <= 1.5 else ("حرج", "#e35d75"))
+        n_al = rd.alarms.filter(acknowledged=False).count()
+        n_cr = rd.alarms.filter(acknowledged=False, level="critical").count()
+        tot_crit += n_cr; tot_warn += (n_al - n_cr)
+        state = "critical" if n_cr else ("warning" if n_al else "ok")
+        if state == "ok":
+            n_ok += 1
+        basins.append({
+            "number": c.number, "label": c.label, "color": c.ui_color, "has_data": True,
+            "date": rd.date, "state": state, "alarms": n_al, "crit": n_cr,
+            "chi": _gauge(sc.chi, good=True) if sc else None,
+            "csi": _gauge(sc.csi, good=True) if sc and sc.csi is not None else None,
+            "cri": _gauge(sc.cri, good=False) if sc else None,
+            "operator": round(float(sc.operator_score)) if sc and sc.operator_score is not None else None,
+            "svi": round(float(mt.svi)) if mt else None,
+            "sor": round(float(mt.sor), 1) if mt else None,
+            "slr": round(float(mt.slr), 2) if mt else None,
+            "hrt": round(float(mt.hrt), 2) if mt else None,
+            "blanket": round(b, 2), "bstate": bstate, "bcol": bcol,
+        })
+
+    overall = "critical" if tot_crit else ("warning" if tot_warn else "ok")
     return render(request, "dashboard/monitor.html", {
-        "latest": latest, "m": m, "s": s,
-        "arc_gauges": arc_gauges, "gauges": gauges,
-        "clarifiers": clarifiers, "sel_clarifier": clarifier,
-        "sel_color": clarifier.ui_color,
-        "n_alarms": n_alarms, "n_crit": n_crit, "overall": overall,
+        "has_data": True, "basins": basins, "plant": plant,
+        "sel_date": sel_date, "min_date": min_date, "max_date": max_date,
+        "is_today": sel_date == today,
+        "overall": overall, "tot_crit": tot_crit, "tot_warn": tot_warn,
+        "n_ok": n_ok, "n_basins": len(clarifiers),
     })
 
 

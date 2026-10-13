@@ -1,50 +1,178 @@
 [
-  {"model": "references.parameterreference", "pk": 1, "fields": {
-    "code": "TSSe", "name_ar": "المواد الصلبة العالقة الخارجة", "name_en": "Effluent Total Suspended Solids",
-    "unit": "mg/L", "category": "Effluent Quality", "functional_area": "Water Quality",
-    "lower_limit": "0", "upper_limit": "20", "warning_lower": "21", "warning_upper": "30",
-    "critical_lower": "31", "critical_upper": "999", "direction": "lower_better",
-    "reference": "Metcalf & Eddy", "importance": "Very High", "normal_range_text": "≤20 mg/L"}},
-
-  {"model": "references.parameterreference", "pk": 2, "fields": {
-    "code": "SVI", "name_ar": "دليل حجم الحمأة", "name_en": "Sludge Volume Index",
-    "unit": "mL/g", "category": "Settling Performance", "functional_area": "Settling",
-    "lower_limit": "80", "upper_limit": "150", "warning_lower": "150", "warning_upper": "200",
-    "critical_lower": "200", "critical_upper": "999", "direction": "target_range",
-    "reference": "Metcalf & Eddy", "importance": "Very High", "normal_range_text": "80–150 mL/g"}},
-
-  {"model": "references.parameterreference", "pk": 3, "fields": {
-    "code": "SBD", "name_ar": "عمق طبقة الحمأة", "name_en": "Sludge Blanket Depth",
-    "unit": "m", "category": "Sludge Management", "functional_area": "Settling",
-    "lower_limit": "0", "upper_limit": "1", "warning_lower": "1", "warning_upper": "1.5",
-    "critical_lower": "1.5", "critical_upper": "999", "direction": "lower_better",
-    "reference": "WEF Manual of Practice No. 11", "importance": "High", "normal_range_text": "≤1.0 m"}},
-
-  {"model": "references.parameterreference", "pk": 4, "fields": {
-    "code": "SOR", "name_ar": "معدل الفيض السطحي", "name_en": "Surface Overflow Rate",
-    "unit": "m³/m²·d", "category": "Hydraulic Loading", "functional_area": "Hydraulic",
-    "lower_limit": "16", "upper_limit": "28", "warning_lower": "28", "warning_upper": "35",
-    "critical_lower": "35", "critical_upper": "999", "direction": "target_range",
-    "reference": "WEF MOP No. 8 / Metcalf & Eddy", "importance": "High", "normal_range_text": "16–28 m³/m²·day"}},
-
-  {"model": "references.parameterreference", "pk": 5, "fields": {
-    "code": "SLR", "name_ar": "معدل التحميل الصلب", "name_en": "Solids Loading Rate",
-    "unit": "kg/m²·h", "category": "Solids Loading", "functional_area": "Sludge Management",
-    "lower_limit": "4", "upper_limit": "6", "warning_lower": "6", "warning_upper": "8",
-    "critical_lower": "8", "critical_upper": "999", "direction": "target_range",
-    "reference": "Metcalf & Eddy / WEF MOP", "importance": "High", "normal_range_text": "4–6 kg/m²·h"}},
-
-  {"model": "references.parameterreference", "pk": 6, "fields": {
-    "code": "RAS", "name_ar": "نسبة الحمأة الراجعة", "name_en": "Return Activated Sludge Ratio",
-    "unit": "%", "category": "Sludge Recirculation", "functional_area": "Sludge Management",
-    "lower_limit": "25", "upper_limit": "75", "warning_lower": "75", "warning_upper": "100",
-    "critical_lower": "100", "critical_upper": "999", "direction": "target_range",
-    "reference": "Metcalf & Eddy", "importance": "Medium", "normal_range_text": "25–75 %"}},
-
-  {"model": "references.parameterreference", "pk": 7, "fields": {
-    "code": "HRT", "name_ar": "زمن المكوث الهيدروليكي", "name_en": "Hydraulic Retention Time",
-    "unit": "h", "category": "Hydraulic Performance", "functional_area": "Hydraulic",
-    "lower_limit": "2", "upper_limit": "4", "warning_lower": "1.5", "warning_upper": "2",
-    "critical_lower": "5", "critical_upper": "999", "direction": "target_range",
-    "reference": "Metcalf & Eddy", "importance": "Medium", "normal_range_text": "2.0–4.0 h"}}
+  {
+    "model": "references.parameterreference",
+    "pk": 1,
+    "fields": {
+      "code": "TSSe",
+      "name_ar": "المواد الصلبة العالقة الخارجة",
+      "name_en": "Effluent Total Suspended Solids",
+      "unit": "mg/L",
+      "category": "Effluent Quality",
+      "functional_area": "Water Quality",
+      "lower_limit": "0",
+      "upper_limit": "20",
+      "warning_lower": "21",
+      "warning_upper": "30",
+      "critical_lower": "31",
+      "critical_upper": "999",
+      "direction": "lower_better",
+      "reference": "Metcalf & Eddy",
+      "importance": "Very High",
+      "normal_range_text": "≤20 mg/L"
+    }
+  },
+  {
+    "model": "references.parameterreference",
+    "pk": 2,
+    "fields": {
+      "code": "SVI",
+      "name_ar": "دليل حجم الحمأة",
+      "name_en": "Sludge Volume Index",
+      "unit": "mL/g",
+      "category": "Settling Performance",
+      "functional_area": "Settling",
+      "lower_limit": "70",
+      "upper_limit": "120",
+      "warning_lower": "50",
+      "warning_upper": "150",
+      "critical_lower": "50",
+      "critical_upper": "150",
+      "direction": "target_range",
+      "reference": "Metcalf & Eddy",
+      "importance": "Very High",
+      "normal_range_text": "70–120 mL/g"
+    }
+  },
+  {
+    "model": "references.parameterreference",
+    "pk": 3,
+    "fields": {
+      "code": "SBD",
+      "name_ar": "عمق طبقة الحمأة",
+      "name_en": "Sludge Blanket Depth",
+      "unit": "m",
+      "category": "Sludge Management",
+      "functional_area": "Settling",
+      "lower_limit": "0.25",
+      "upper_limit": "0.9",
+      "warning_lower": "0",
+      "warning_upper": "1.5",
+      "critical_lower": "0",
+      "critical_upper": "1.5",
+      "direction": "target_range",
+      "reference": "WEF Manual of Practice No. 11",
+      "importance": "High",
+      "normal_range_text": "0.25–0.9 m"
+    }
+  },
+  {
+    "model": "references.parameterreference",
+    "pk": 4,
+    "fields": {
+      "code": "SOR",
+      "name_ar": "معدل الفيض السطحي",
+      "name_en": "Surface Overflow Rate",
+      "unit": "m³/m²·d",
+      "category": "Hydraulic Loading",
+      "functional_area": "Hydraulic",
+      "lower_limit": "16",
+      "upper_limit": "28",
+      "warning_lower": "10",
+      "warning_upper": "40",
+      "critical_lower": "10",
+      "critical_upper": "40",
+      "direction": "target_range",
+      "reference": "WEF MOP No. 8 / Metcalf & Eddy",
+      "importance": "High",
+      "normal_range_text": "16–28 m³/m²·day"
+    }
+  },
+  {
+    "model": "references.parameterreference",
+    "pk": 5,
+    "fields": {
+      "code": "SLR",
+      "name_ar": "معدل التحميل الصلب",
+      "name_en": "Solids Loading Rate",
+      "unit": "kg/m²·h",
+      "category": "Solids Loading",
+      "functional_area": "Sludge Management",
+      "lower_limit": "4",
+      "upper_limit": "6",
+      "warning_lower": "2",
+      "warning_upper": "8",
+      "critical_lower": "2",
+      "critical_upper": "8",
+      "direction": "target_range",
+      "reference": "Metcalf & Eddy / WEF MOP",
+      "importance": "High",
+      "normal_range_text": "4–6 kg/m²·h"
+    }
+  },
+  {
+    "model": "references.parameterreference",
+    "pk": 6,
+    "fields": {
+      "code": "RAS",
+      "name_ar": "نسبة الحمأة الراجعة",
+      "name_en": "Return Activated Sludge Ratio",
+      "unit": "%",
+      "category": "Sludge Recirculation",
+      "functional_area": "Sludge Management",
+      "lower_limit": "25",
+      "upper_limit": "75",
+      "warning_lower": "15",
+      "warning_upper": "100",
+      "critical_lower": "15",
+      "critical_upper": "100",
+      "direction": "target_range",
+      "reference": "Metcalf & Eddy",
+      "importance": "Medium",
+      "normal_range_text": "25–75 %"
+    }
+  },
+  {
+    "model": "references.parameterreference",
+    "pk": 7,
+    "fields": {
+      "code": "HRT",
+      "name_ar": "زمن المكوث الهيدروليكي",
+      "name_en": "Hydraulic Retention Time",
+      "unit": "h",
+      "category": "Hydraulic Performance",
+      "functional_area": "Hydraulic",
+      "lower_limit": "2",
+      "upper_limit": 6,
+      "warning_lower": "1.5",
+      "warning_upper": 7,
+      "critical_lower": 7,
+      "critical_upper": 999,
+      "direction": "target_range",
+      "reference": "Metcalf & Eddy",
+      "importance": "Medium",
+      "normal_range_text": "2.0–6.0 h"
+    }
+  },
+  {
+    "model": "references.parameterreference",
+    "pk": 8,
+    "fields": {
+      "code": "MLSS",
+      "name_ar": "المواد الصلبة العالقة في الخليط",
+      "name_en": "Mixed Liquor Suspended Solids",
+      "unit": "mg/L",
+      "category": "Biological Process",
+      "functional_area": "Water Quality",
+      "lower_limit": "1000",
+      "upper_limit": "4000",
+      "warning_lower": "800",
+      "warning_upper": "5000",
+      "critical_lower": "800",
+      "critical_upper": "5000",
+      "direction": "target_range",
+      "reference": "Metcalf & Eddy",
+      "importance": "Very High",
+      "normal_range_text": "1000–4000 mg/L"
+    }
+  }
 ]

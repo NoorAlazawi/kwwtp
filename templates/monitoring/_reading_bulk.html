@@ -1,3 +1,4 @@
+{% load static %}{% load cachebust %}
 {% if form.non_field_errors %}<div class="msg error">{{ form.non_field_errors }}</div>{% endif %}
 {% if no_blanket %}<div class="msg error">أدخل طبقة الحمأة لحوضٍ واحد على الأقل.</div>{% endif %}
 
@@ -18,6 +19,11 @@
     </div>
     {% endfor %}
   </div>
+</div>
+
+<div class="basins-ref">
+  <img src="{% static_v 'img/basins.jpg' %}" alt="أحواض الترسيب الثانوي SC-1 … SC-8">
+  <div class="basins-ref-cap">مخطّط الأحواض الثمانية — SC-1 إلى SC-8</div>
 </div>
 
 <div class="bulk-sec">

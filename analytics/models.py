@@ -1,13 +1,9 @@
-"""
-analytics — المخرجات المحسوبة من كل قراءة يومية:
-المؤشرات المشتقّة (Metric) · التشخيص (Diagnosis) · الفهارس (IndexScore) · الإنذارات (Alarm).
-"""
 from django.db import models
 from django.conf import settings
 
 
 class Metric(models.Model):
-    """المؤشرات المشتقّة لقراءة واحدة (يقابل ورقة Calculation)."""
+    """المؤشرات المشتقّة لقراءة واحدة."""
     reading = models.OneToOneField(
         "monitoring.DailyReading", verbose_name="القراءة",
         on_delete=models.CASCADE, related_name="metric",
@@ -31,7 +27,7 @@ class Metric(models.Model):
 
 
 class Diagnosis(models.Model):
-    """تشخيص مؤشر واحد ليوم واحد (يقابل ورقة Diagnosis)."""
+    """تشخيص مؤشر واحد ليوم واحد."""
 
     class Status(models.TextChoices):
         NORMAL = "normal", "طبيعي"
@@ -91,7 +87,7 @@ class IndexScore(models.Model):
 
 
 class Alarm(models.Model):
-    """إنذار ذكي (يقابل ورقة Smart Alarm System) — فعلي أو استباقي (تنبؤ)."""
+    """إنذار فعلي أو استباقي (تنبؤ)."""
 
     class Level(models.TextChoices):
         WARNING = "warning", "تحذير"

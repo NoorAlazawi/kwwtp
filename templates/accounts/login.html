@@ -1,16 +1,16 @@
 {% extends "base.html" %}
+{% load static %}{% load cachebust %}
 {% block title %}تسجيل الدخول — نظام مراقبة الأحواض{% endblock %}
 
 {% block body %}
 <div class="login-page">
   <div class="login-card glass">
-    <div class="logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">
-        <path d="M12 2C7 8 5 11 5 15a7 7 0 0 0 14 0c0-4-2-7-7-13z"/>
-      </svg>
+    <div class="logo logo-img">
+      <img src="{% static_v 'img/logo.png' %}" alt="مديرية مجاري كربلاء">
     </div>
     <h1>مرحباً بعودتك</h1>
-    <p class="cap">نظام مراقبة أداء أحواض الترسيب الثانوي الذكي</p>
+    <p class="cap"><b style="color:var(--primary-d);font-family:'Oxanium'">SSC-MDSS</b> — النظام الذكي لمراقبة أحواض الترسيب الثانوي ودعم القرار</p>
+    <p class="cap" style="font-size:10.5px;margin-top:2px">Smart Secondary Clarifier Monitoring &amp; Decision Support System · مديرية مجاري كربلاء المقدسة</p>
 
     {% if form.errors %}
       <div class="login-err">اسم المستخدم أو كلمة المرور غير صحيحة.</div>

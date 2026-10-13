@@ -1,7 +1,3 @@
-"""
-references — قاعدة الحدود العلمية (يقابل ورقة Scientific References).
-هذه الأرقام هي «عقل» النظام: المشرف يعدّلها من لوحة الإدارة دون لمس الكود.
-"""
 from django.db import models
 
 
@@ -19,7 +15,6 @@ class ParameterReference(models.Model):
     category = models.CharField("الفئة", max_length=60, blank=True)
     functional_area = models.CharField("المجال الوظيفي", max_length=40, blank=True)
 
-    # الحدود (بنفس منطق أعمدة J..O في ورقة Scientific References)
     lower_limit = models.DecimalField("الحد الأدنى الطبيعي", max_digits=10, decimal_places=3)
     upper_limit = models.DecimalField("الحد الأعلى الطبيعي", max_digits=10, decimal_places=3)
     warning_lower = models.DecimalField("تحذير أدنى", max_digits=10, decimal_places=3)

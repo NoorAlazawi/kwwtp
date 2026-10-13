@@ -6,7 +6,7 @@
 {% block content %}
 <div class="topbar glass">
   <div>
-    <h2>لوحة المراقبة </h2>
+    <h2>لوحة المراقبة الحيّة</h2>
     {% if latest %}<div class="sub">{{ latest.clarifier }} · آخر تحديث {{ latest.date }}</div>
     {% else %}<div class="sub">لا توجد قراءات بعد</div>{% endif %}
   </div>
@@ -55,7 +55,6 @@
   </div>
 {% else %}
 
-<!-- نظرة عامة: حالة كل الأحواض في اليوم المختار -->
 <div class="card glass basins-card">
   <div class="basins-head">
     <div><h3>حالة كل الأحواض</h3><p class="cap">لمحة سريعة ليوم {{ end_date|date:'Y/m/d' }} — انقر أي حوض لعرض تفاصيله</p></div>
@@ -63,15 +62,15 @@
   </div>
   <div class="basins-grid">
     {% for b in basins_overview %}
-    <a href="?clarifier={{ b.number }}&end={{ end_date|date:'Y-m-d' }}" class="basin-chip {% if b.is_selected %}sel{% endif %}" style="{% if b.is_selected %}--bc:{{ b.color }};{% endif %}">
+    <a href="?clarifier={{ b.number }}&end={{ end_date|date:'Y-m-d' }}" data-bn="{{ b.number }}" class="basin-chip {% if b.is_selected %}sel{% endif %}" style="{% if b.is_selected %}--bc:{{ b.color }};{% endif %}">
       {% if b.has_data %}
       <div class="bc-top">
         <span class="bc-num" style="color:{{ b.color }}">{{ b.label }}</span>
         {% if b.alarms %}<span class="bc-alarm">{{ b.alarms }} ⚠</span>{% endif %}
       </div>
       <div class="bc-chi" style="color:{{ b.hcol }}">
-        <span class="bc-ring" style="border-color:{{ b.color }}">{{ b.chi }}</span>
-        <span class="bc-lbl">CHI الصحة</span>
+        <span class="bc-ring" style="border-color:{{ b.color }}">{{ b.perf }}</span>
+        <span class="bc-lbl">الأداء العام</span>
       </div>
       <div class="bc-rows">
         <span>SVI <b>{{ b.svi }}</b></span>
@@ -115,7 +114,7 @@
       <div class="ch-id">
         <span class="ch-dot" style="background:{{ sel_color }};box-shadow:0 0 0 4px {{ sel_color }}22"></span>
         <div class="ch-txt">
-          <h3>حوض الترسيب الثانوي <span class="ch-code" style="color:{{ sel_color }}">{{ sel_clarifier.label }}</span></h3>
+          <h3>حوض الترسيب الثانوي <span class="ch-code" id="selBasinName" style="color:{{ sel_color }}">{{ sel_clarifier.label }}</span></h3>
           <p class="cap">{{ sel_clarifier.plant.name }} · مؤشرات حيّة تُحدَّث من البيانات</p>
         </div>
       </div>
@@ -127,35 +126,27 @@
     <div class="stageImg">
       <img class="tankbg" src="{% static_v 'img/clarifier.png' %}" alt="حوض الترسيب">
 
-      <!-- حركة الحمأة في القاع: تنجرف للمركز ثم تُسحب للمجرى السفلي -->
       <div class="sludge-motion">
-        <!-- دوّامة عند القمع المركزي -->
         <div class="vortex" style="top:74%;width:70px;height:22px"></div>
         <div class="vortex" style="top:74%;width:40px;height:13px;animation-duration:4s;animation-direction:reverse"></div>
-        <!-- حبيبات تنجرف من اليسار نحو المركز -->
         <span class="silt" style="left:16%;top:62%;width:6px;height:6px;--sx:120px;--sy:26px;animation-duration:5s"></span>
         <span class="silt" style="left:22%;top:68%;width:5px;height:5px;--sx:90px;--sy:20px;animation-duration:6s;animation-delay:1s"></span>
         <span class="silt" style="left:12%;top:70%;width:7px;height:7px;--sx:130px;--sy:24px;animation-duration:5.5s;animation-delay:2s"></span>
-        <!-- حبيبات تنجرف من اليمين نحو المركز -->
         <span class="silt" style="left:78%;top:62%;width:6px;height:6px;--sx:-120px;--sy:26px;animation-duration:5.2s;animation-delay:.5s"></span>
         <span class="silt" style="left:72%;top:68%;width:5px;height:5px;--sx:-90px;--sy:20px;animation-duration:6.2s;animation-delay:1.6s"></span>
         <span class="silt" style="left:84%;top:70%;width:7px;height:7px;--sx:-135px;--sy:24px;animation-duration:5.8s;animation-delay:2.4s"></span>
-        <!-- حبيبات قرب المركز تسقط للقمع -->
         <span class="silt" style="left:45%;top:76%;width:6px;height:6px;--sx:6px;--sy:34px;animation-duration:3.5s"></span>
         <span class="silt" style="left:50%;top:74%;width:5px;height:5px;--sx:-4px;--sy:36px;animation-duration:4s;animation-delay:1.2s"></span>
-        <!-- تيّار السحب النازل عبر المجرى السفلي -->
 
       </div>
       <div class="hud">
-        <!-- توهّج بئر التغذية المركزي -->
         <div class="feed-glow" style="left:50%;top:30%"></div>
         <div class="surface-ping" style="left:50%;top:30%"></div>
 
-        <!-- مقياس طبقة الحمأة العمودي (على يسار الصورة، بمحاذاة الطبقة) -->
         <div class="blanket-gauge">
           <div class="bg-title">طبقة الحمأة<br><b><span data-k="blanket">{{ latest.sludge_blanket|floatformat:2 }}</span> م</b></div>
           <div class="bg-body">
-            <div class="bg-scale"><span>6</span><span>5.5</span><span>5</span><span>4.5</span><span>4</span><span>3.5</span><span>3</span><span>2.5</span><span>2</span><span>1.5</span><span>1</span><span>0.5</span><span>0</span></div>
+            <div class="bg-scale"><span>2.0</span><span>1.5</span><span>1.0</span><span>0.5</span><span>0</span></div>
             <div class="bg-tube">
               <div class="bg-zone bg-crit"></div><div class="bg-zone bg-high"></div>
               <div class="bg-zone bg-norm"></div><div class="bg-zone bg-low"></div>
@@ -168,20 +159,19 @@
       </div>
     </div>
 
-    <!-- صفّ بيانات التدفّق أسفل الصورة (بلا تراكب) -->
     <div class="flow-cards">
       <div class="flow-card">
-        <div class="fc-h" style="color:{{ sel_color }}">INFLUENT </div>
+        <div class="fc-h" style="color:{{ sel_color }}">INFLUENT — الداخل</div>
         <div class="fc-r"><span>التصريف</span><b><span data-k="flow">{{ latest.flow_q|floatformat:0 }}</span> <small>م³/د</small></b></div>
         <div class="fc-r"><span>TSS</span><b><span data-k="tss_in">{{ latest.tss_in|floatformat:0 }}</span> <small>mg/L</small></b></div>
       </div>
       <div class="flow-card">
-        <div class="fc-h" style="color:#1f9e6f">EFFLUENT</div>
+        <div class="fc-h" style="color:#1f9e6f">EFFLUENT — الخارج</div>
         <div class="fc-r"><span>التصريف</span><b><span data-k="eff">{{ latest.flow_q|floatformat:0 }}</span> <small>م³/د</small></b></div>
         <div class="fc-r"><span>TSS</span><b><span data-k="tss_out">{{ latest.tss_out|floatformat:0 }}</span> <small>mg/L</small></b></div>
       </div>
       <div class="flow-card">
-        <div class="fc-h" style="color:#c8860a"> الحمأة</div>
+        <div class="fc-h" style="color:#c8860a">WAS — سحب الحمأة</div>
         <div class="fc-r"><span>WAS</span><b><span data-k="was">{{ m.qw_was|floatformat:0 }}</span> <small>م³/د</small></b></div>
         <div class="fc-r"><span>RAS</span><b><span data-k="ras">{{ m.qr_ras|floatformat:0 }}</span> <small>م³/د</small></b></div>
       </div>
@@ -199,10 +189,11 @@
       <div><h3>الفهارس المركّبة</h3><p class="cap">الصحة · الاستقرار · المخاطر</p></div>
       <span class="perf-go">التنبيهات والتوصيات <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></span>
     </div>
-    <div class="gauges">{% for g in gauges %}{% include "dashboard/_gauge.html" %}{% endfor %}</div>
+    {{ basins_idx|json_script:"basinsIdx" }}
+    <div class="gauges" id="compGauges">{% for g in gauges %}{% include "dashboard/_gauge.html" %}{% endfor %}</div>
     <div style="margin-top:16px;text-align:center;padding:12px;border-radius:14px;background:var(--primary-l)">
       <span style="font-size:12px;color:var(--ink-2);font-weight:700">تقييم حوض الترسيب الثانوي</span>
-      <div class="num" style="font-size:26px;font-weight:800;color:var(--primary-d);margin-top:2px">{{ s.operator_score|floatformat:0 }}<span style="font-size:14px;color:var(--ink-3)"> / 100</span></div>
+      <div class="num" style="font-size:26px;font-weight:800;color:var(--primary-d);margin-top:2px"><span id="opScore">{{ s.operator_score|floatformat:0 }}</span><span style="font-size:14px;color:var(--ink-3)"> / 100</span></div>
     </div>
   </div>
 </div>
@@ -228,28 +219,37 @@
 
 <div class="cols" style="margin-bottom:16px">
   <div class="card glass dark-card">
-    <div class="chart-head"><h3>اتجاهات المتغيّرات — 7 أيام</h3>
+    <div class="chart-head"><h3>SVI وطبقة الحمأة — 7 أيام</h3>
       <div class="chart-toggle" id="trendToggle">
         <button data-s="all" class="on">الكل</button>
         <button data-s="svi">SVI</button>
-        <button data-s="tss">TSS</button>
-        <button data-s="cod">COD</button>
-        <button data-s="bod">BOD</button>
+        <button data-s="blk">طبقة الحمأة</button>
       </div>
     </div>
     <div class="chart-box"><canvas id="trend"></canvas></div>
   </div>
   <div class="card glass dark-card">
-    <div class="chart-head"><h3>كفاءة الإزالة (%)</h3>
-      <div class="chart-toggle" id="removalToggle">
+    <div class="chart-head"><h3>جودة المياه الخارجة — 7 أيام</h3>
+      <div class="chart-toggle" id="effToggle">
         <button data-s="all" class="on">الكل</button>
         <button data-s="tss">TSS</button>
         <button data-s="cod">COD</button>
         <button data-s="bod">BOD</button>
       </div>
     </div>
-    <div class="chart-box"><canvas id="removal"></canvas></div>
+    <div class="chart-box"><canvas id="effluent"></canvas></div>
   </div>
+</div>
+<div class="card glass dark-card" style="margin-bottom:16px">
+  <div class="chart-head"><h3>كفاءة الإزالة (%)</h3>
+    <div class="chart-toggle" id="removalToggle">
+      <button data-s="all" class="on">الكل</button>
+      <button data-s="tss">TSS</button>
+      <button data-s="cod">COD</button>
+      <button data-s="bod">BOD</button>
+    </div>
+  </div>
+  <div class="chart-box"><canvas id="removal"></canvas></div>
 </div>
 
 <div class="cols" id="alertsSection" style="scroll-margin-top:16px">
@@ -289,7 +289,6 @@
   </div>
 </div>
 
-<!-- التوصيات التشغيلية (قابلة للتعديل والإضافة) -->
 <div class="card glass" id="recsSection" style="margin-top:16px">
   <h3>التوصيات التشغيلية</h3><p class="cap">{{ sel_clarifier.label }} — توصيات يوم <b style="color:var(--primary-d)">{{ end_date|date:'Y/m/d' }}</b> فقط</p>
   <form method="post" action="{% url 'rec_add' %}" class="rec-add">
@@ -313,7 +312,7 @@
       </form>
     </div>
     {% empty %}
-    <div class="empty" style="padding:20px"><p>لا توجد توصيات بعد.</p></div>
+    <div class="empty" style="padding:20px"><p>لا توجد توصيات بعد — أضف أول توصية أعلاه.</p></div>
     {% endfor %}
   </div>
 </div>
@@ -333,7 +332,7 @@ const fmt = n => Math.round(n).toLocaleString('en-US');
 const ARC = {
   SOR:{min:0,max:45,z:[[0,16,'#f5a524'],[16,28,'#12b981'],[28,999,'#f2545b']]},
   SLR:{min:0,max:12,z:[[0,4,'#f5a524'],[4,6,'#12b981'],[6,999,'#f2545b']]},
-  HRT:{min:0,max:8,z:[[0,2,'#f5a524'],[2,4,'#12b981'],[4,999,'#f2545b']]},
+  HRT:{min:0,max:10,z:[[0,2,'#f5a524'],[2,6,'#12b981'],[6,999,'#f2545b']]},
 };
 function arcColor(v,z){for(const[lo,hi,c]of z)if(v>=lo&&v<hi)return c;return '#12b981';}
 function setText(k,val){document.querySelectorAll(`[data-k="${k}"]`).forEach(e=>e.textContent=val);}
@@ -348,16 +347,16 @@ function render(){
   setText('svi',Math.round(D.svi[idx])); setText('blanket',blanket.toFixed(2));
   setText('ras',fmt(D.ras[idx])); setText('was',fmt(D.was[idx])); setText('tss_out',Math.round(D.tss_out[idx]));
   let col,state;
-  if(blanket<1){col='#3b82f6';state='LOW';}
-  else if(blanket<3){col='#12b981';state='NORMAL';}
-  else if(blanket<4){col='#f5a524';state='HIGH';}
+  if(blanket<0.25){col='#f5a524';state='LOW';}
+  else if(blanket<=0.9){col='#12b981';state='NORMAL';}
+  else if(blanket<=1.5){col='#f5a524';state='HIGH';}
   else{col='#f2545b';state='CRITICAL';}
   const bs=document.getElementById('blkState');
   if(bs){bs.textContent=state; const chip=bs.closest('.ch-status'); if(chip){chip.style.setProperty('--sc',col);} else {bs.style.color=col;}}
 
 
-  // تحديث مقياس طبقة الحمأة العمودي (المقياس من 0 إلى 4م)
-  const pct=Math.min(blanket/6*100,100);
+  // تحديث مقياس طبقة الحمأة العمودي (المقياس من 0 إلى 2م)
+  const pct=Math.min(blanket/2*100,100);
   const fill=document.getElementById('bgFill');
   if(fill){fill.style.height=pct+'%';fill.style.background=col;fill.style.color=col;}
   const mrk=document.getElementById('bgMarker');
@@ -382,7 +381,7 @@ function render(){
   updateCharts();
 }
 
-let tChart,rChart;
+let tChart,eChart,rChart;
 // توهّج نيون: يلوّن ظلّ كل سلسلة بلونها
 const glowPlugin={id:'glow',
   beforeDatasetDraw(c,args){const ds=c.data.datasets[args.index];c.ctx.save();c.ctx.shadowBlur=10;c.ctx.shadowColor=ds.shadowColor||'rgba(90,109,134,.4)';},
@@ -394,18 +393,31 @@ function buildCharts(){
   const legend={position:'top',labels:{color:'#2d3e55',font:{family:'Cairo',size:11},boxWidth:10,boxHeight:10,padding:12,usePointStyle:true}};
   const tip={backgroundColor:'rgba(255,255,255,.95)',titleColor:'#2d3e55',bodyColor:'#5a6d86',borderColor:'rgba(90,109,134,.2)',borderWidth:1,padding:10,cornerRadius:10};
 
+  // المخطط الأول: SVI (محور يسار) + طبقة الحمأة (محور يمين) — حدودهما مختلفة
   const tc=document.getElementById('trend').getContext('2d');
   tChart=new Chart(tc,{type:'line',
     data:{labels:D.dates,datasets:[
       {label:'SVI',dsKey:'svi',data:D.svi,borderColor:'#2fb3b0',pointBackgroundColor:'#2fb3b0',backgroundColor:'rgba(38,208,206,.14)',borderWidth:2.5,tension:.4,pointRadius:3,fill:true,shadowColor:'rgba(47,179,176,.5)'},
-      {label:'TSS الخارج',dsKey:'tss',data:D.tss_out,borderColor:'#e35d90',pointBackgroundColor:'#e35d90',backgroundColor:'rgba(255,77,157,.10)',borderWidth:2.5,tension:.4,pointRadius:3,fill:true,shadowColor:'rgba(227,93,144,.45)'},
-      {label:'COD الخارج',dsKey:'cod',data:D.cod_out,borderColor:'#e8a94a',pointBackgroundColor:'#e8a94a',backgroundColor:'rgba(232,169,74,.10)',borderWidth:2.5,tension:.4,pointRadius:3,fill:true,shadowColor:'rgba(232,169,74,.4)'},
-      {label:'BOD الخارج',dsKey:'bod',data:D.bod_out,borderColor:'#6d7ce8',pointBackgroundColor:'#6d7ce8',backgroundColor:'rgba(109,124,232,.10)',borderWidth:2.5,tension:.4,pointRadius:3,fill:true,shadowColor:'rgba(109,124,232,.4)'},
-      {label:'طبقة الحمأة',dsKey:'blk',data:D.blanket,borderColor:'#9a7fe0',pointBackgroundColor:'#9a7fe0',backgroundColor:'rgba(200,162,255,.08)',borderWidth:2.5,tension:.4,pointRadius:3,fill:false,yAxisID:'y1',shadowColor:'rgba(154,127,224,.45)'},
+      {label:'طبقة الحمأة (م)',dsKey:'blk',data:D.blanket,borderColor:'#9a7fe0',pointBackgroundColor:'#9a7fe0',backgroundColor:'rgba(200,162,255,.10)',borderWidth:2.5,tension:.4,pointRadius:3,fill:true,yAxisID:'y1',shadowColor:'rgba(154,127,224,.45)'},
     ]},
     options:{responsive:true,maintainAspectRatio:false,resizeDelay:120,animation:{duration:700},
       plugins:{legend:legend,tooltip:tip},
-      scales:{y:{...ax},y1:{position:'right',min:0,max:6,grid:{drawOnChartArea:false},ticks:{color:'#7a6ad9',font:{family:'Oxanium',size:10}}},x:{...ax,grid:{display:false}}}},
+      scales:{y:{...ax,title:{display:true,text:'SVI (mL/g)',color:'#5a6d86',font:{family:'Cairo',size:10}}},
+              y1:{position:'right',min:0,grid:{drawOnChartArea:false},title:{display:true,text:'طبقة الحمأة (م)',color:'#7a6ad9',font:{family:'Cairo',size:10}},ticks:{color:'#7a6ad9',font:{family:'Oxanium',size:10}}},
+              x:{...ax,grid:{display:false}}}},
+    plugins:[glowPlugin]});
+
+  // المخطط الثاني: جودة المياه الخارجة TSS/COD/BOD — نفس الوحدة (mg/L)
+  const ec=document.getElementById('effluent').getContext('2d');
+  eChart=new Chart(ec,{type:'line',
+    data:{labels:D.dates,datasets:[
+      {label:'TSS الخارج',dsKey:'tss',data:D.tss_out,borderColor:'#e35d90',pointBackgroundColor:'#e35d90',backgroundColor:'rgba(255,77,157,.10)',borderWidth:2.5,tension:.4,pointRadius:3,fill:true,shadowColor:'rgba(227,93,144,.45)'},
+      {label:'COD الخارج',dsKey:'cod',data:D.cod_out,borderColor:'#e8a94a',pointBackgroundColor:'#e8a94a',backgroundColor:'rgba(232,169,74,.10)',borderWidth:2.5,tension:.4,pointRadius:3,fill:true,shadowColor:'rgba(232,169,74,.4)'},
+      {label:'BOD الخارج',dsKey:'bod',data:D.bod_out,borderColor:'#6d7ce8',pointBackgroundColor:'#6d7ce8',backgroundColor:'rgba(109,124,232,.10)',borderWidth:2.5,tension:.4,pointRadius:3,fill:true,shadowColor:'rgba(109,124,232,.4)'},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,resizeDelay:120,animation:{duration:700},
+      plugins:{legend:legend,tooltip:tip},
+      scales:{y:{...ax,min:0,title:{display:true,text:'mg/L',color:'#5a6d86',font:{family:'Cairo',size:10}}},x:{...ax,grid:{display:false}}}},
     plugins:[glowPlugin]});
 
   const rc=document.getElementById('removal').getContext('2d');
@@ -434,7 +446,9 @@ function wireToggle(btnGroupId, chartGetter){
     ch.update();
   });
 }
-function updateCharts(){if(!tChart)return;tChart.data.datasets.forEach(ds=>{ds.pointRadius=ds.data.map((_,i)=>i===idx?6:3);});tChart.update('none');}
+function updateCharts(){
+  [tChart,eChart].forEach(ch=>{if(!ch)return;ch.data.datasets.forEach(ds=>{ds.pointRadius=ds.data.map((_,i)=>i===idx?6:3);});ch.update('none');});
+}
 
 function step(){idx=idx>=N-1?0:idx+1;render();}
 function play(){playing=true;document.getElementById('playIc').innerHTML='<rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/>';clearInterval(timer);timer=setInterval(step,speed);}
@@ -446,8 +460,38 @@ document.getElementById('ticks').innerHTML=D.dates.map(d=>`<span>${d}</span>`).j
 
 buildCharts();render();
 wireToggle('trendToggle',()=>tChart);
+wireToggle('effToggle',()=>eChart);
 wireToggle('removalToggle',()=>rChart);
 setTimeout(play,1000);
+
+// تبديل الفهارس المركّبة فورياً عند اختيار حوض (بدون إعادة تحميل)
+(function(){
+  const el=document.getElementById('basinsIdx'); if(!el) return;
+  let IDX={}; try{IDX=JSON.parse(el.textContent);}catch(e){return;}
+  const gEls=document.querySelectorAll('#compGauges .gauge');
+  function applyGauge(g,d){
+    if(!g||!d) return;
+    const c=g.querySelectorAll('.ring circle'); if(c[1]){c[1].setAttribute('stroke',d.c);c[1].setAttribute('stroke-dashoffset',d.o);}
+    const num=g.querySelector('.num'); if(num) num.textContent=(d.v==null?'—':d.v);
+    const st=g.querySelector('.st'); if(st){st.textContent=d.s||'—';st.style.color=d.t;}
+  }
+  function selectBasin(bn,href){
+    const d=IDX[bn]; if(!d) return false;
+    applyGauge(gEls[0],d.chi); applyGauge(gEls[1],d.csi); applyGauge(gEls[2],d.cri);
+    const op=document.getElementById('opScore'); if(op) op.textContent=(d.op==null?'—':d.op);
+    const nm=document.getElementById('selBasinName'); if(nm) nm.textContent=d.name;
+    document.querySelectorAll('.basin-chip').forEach(c=>c.classList.toggle('sel',c.dataset.bn===String(bn)));
+    if(href) history.replaceState(null,'',href);
+    return true;
+  }
+  document.querySelectorAll('.basin-chip').forEach(ch=>{
+    ch.addEventListener('click',function(e){
+      const bn=this.dataset.bn; if(!bn||!IDX[bn]) return;   // بلا بيانات → تحميل عادي
+      e.preventDefault();
+      selectBasin(bn,this.getAttribute('href'));
+    });
+  });
+})();
 </script>
 {% endif %}
 {% endblock %}

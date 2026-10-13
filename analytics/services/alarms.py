@@ -1,13 +1,8 @@
-"""
-محرّك الإنذارات — يولّد إنذاراً لكل تشخيص Warning/Critical (يقابل ورقة Smart Alarm System).
-"""
-from decimal import Decimal
 from analytics.models import Alarm
 
 
 def generate_alarms(reading):
-    """يمسح تشخيصات القراءة وينشئ إنذارات. يعيد (عدد الحرجة، عدد التحذيرية)."""
-    reading.alarms.filter(is_predicted=False).delete()   # تنظيف الإنذارات الفعلية القديمة
+    reading.alarms.filter(is_predicted=False).delete()
     crit = warn = 0
     for i, d in enumerate(reading.diagnoses.all(), start=1):
         if d.status in ("warning", "underloaded"):

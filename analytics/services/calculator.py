@@ -1,6 +1,3 @@
-"""
-حساب المؤشرات المشتقّة من قراءة يومية — يطبّق معادلات ورقة Calculation حرفياً.
-"""
 from decimal import Decimal
 from analytics.models import Metric
 
@@ -10,27 +7,23 @@ def _d(x) -> Decimal:
 
 
 def compute_metrics(reading) -> Metric:
-    """يحسب SLR, SOR, HRT, SVI, ونسب الإزالة ويخزّنها في Metric.
-
-    التصريف Q في القراءة هو نصيب الحوض الواحد مباشرةً (لكل حوض قراءاته الخاصة).
-    تُطبّق المعادلات بمساحة وحجم الحوض الواحد (A=804 م²، V=3216 م³).
-    """
     r = reading
     clar = r.clarifier
-    area = float(clar.surface_area_m2)      # A = 804 م² (حوض واحد)
-    vol = float(clar.volume_m3)             # V = 3216 م³ (حوض واحد)
+    area = float(clar.surface_area_m2)
+    vol = float(clar.volume_m3)
 
-    flow = float(r.flow_q)                           # تصريف الحوض الواحد Q
+    flow = float(r.flow_q)
     mlss = float(r.mlss)
-    qr = float(r.ras_percent) * flow / 100          # RAS m³/d = %RAS × Q /100
-    qw = float(r.was_percent) * flow / 100          # WAS m³/d = %WAS × Q /100
-    inflow = flow + qr                               # Q + Qr (مقام HRT و SLR)
-    svi = (float(r.sv30) * 1000 / mlss) if mlss else 0        # SVI = SV30×1000 / MLSS
-    sor = (flow / area) if area else 0                        # SOR = Q / A
-    slr = ((inflow / 24 * (mlss / 1000)) / area) if area else 0   # SLR = [(Q+Qr)/24 × MLSS/1000] / A
-    hrt = (vol / inflow * 24) if inflow else 0               # HRT = [V / (Q+Qr)] × 24
+    qr = float(r.ras_percent) * flow / 100
+    qw = float(r.was_percent) * flow / 100
+    inflow = flow + qr
 
-    # حدّ أمان أعلى (يمنع تجاوز سعة الحقول عند إدخال تصريف صغير جداً بالخطأ)
+    svi = (float(r.sv30) * 1000 / mlss) if mlss else 0
+    sor = (flow / area) if area else 0
+    slr = ((inflow / 24 * (mlss / 1000)) / area) if area else 0
+    hrt = (vol / inflow * 24) if inflow else 0
+
+    # حدّ أعلى يمنع تجاوز سعة الحقول عند تصريف صغير جداً
     svi = min(svi, 9_999_999)
     sor = min(sor, 9_999_999)
     slr = min(slr, 9_999_999)

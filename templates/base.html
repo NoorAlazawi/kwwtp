@@ -5,8 +5,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{% block title %}نظام مراقبة أحواض الترسيب{% endblock %}</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%233b9db0'/><path d='M16 6C11 12 9 15 9 19a7 7 0 0 0 14 0c0-4-2-7-7-13z' fill='%23fff'/></svg>">
+<title>{% block title %}نظام مراقبة أحواض الترسيب{% endblock %} · SSC-MDSS</title>
+<link rel="icon" href="{% static_v 'img/logo.png' %}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Oxanium:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -17,17 +17,14 @@
 <div class="wrap">
 {% block body %}
 <div class="layout">
-  <!-- الشريط الجانبي -->
   <aside class="sidebar glass">
     <div class="brand">
-      <div class="logo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">
-          <path d="M12 2C7 8 5 11 5 15a7 7 0 0 0 14 0c0-4-2-7-7-13z"/>
-        </svg>
+      <div class="logo logo-img">
+        <img src="{% static_v 'img/logo.png' %}" alt="مديرية مجاري كربلاء">
       </div>
       <div>
         <h1>مراقبة الأحواض</h1>
-        <span>مجاري كربلاء المقدسة</span>
+        <span>مديرية مجاري كربلاء المقدسة</span>
       </div>
     </div>
 
@@ -82,7 +79,6 @@
     </div>
   </aside>
 
-  <!-- المحتوى -->
   <main class="main">
     {% if messages %}
       {% for m in messages %}
@@ -95,7 +91,6 @@
 {% endblock %}
 </div>
 
-<!-- نافذة إدخال/تعديل القراءة (منبثقة) -->
 <div class="modal-overlay" id="readingModal" aria-hidden="true">
   <div class="modal-card glass" role="dialog" aria-modal="true" aria-labelledby="rmTitle">
     <div class="modal-head">
@@ -128,7 +123,6 @@
   </div>
 </div>
 
-<!-- حاوية الإشعارات المنبثقة (أعلى اليسار) -->
 <div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
 
 <script>

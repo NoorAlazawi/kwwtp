@@ -1,8 +1,25 @@
+# Python
 __pycache__/
 *.py[cod]
+*.egg-info/
+
+# Django
 db.sqlite3
-.env
+db.sqlite3-journal
 /media/
 /staticfiles/
+
+# البيئة والأسرار — لا تُرفع أبداً
+.env
 .venv/
 venv/
+env/
+
+# المحرّرات وأنظمة التشغيل
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ملفات البيانات المحليّة (لا ترفع بيانات حسّاسة)
+*.xlsx
