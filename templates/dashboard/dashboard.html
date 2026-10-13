@@ -6,7 +6,7 @@
 {% block content %}
 <div class="topbar glass">
   <div>
-    <h2>{% trans "لوحة المراقبة " %}</h2>
+    <h2>{% trans "لوحة المراقبة" %}</h2>
     {% if latest %}<div class="sub">{{ latest.clarifier }} · {% trans "آخر تحديث" %} {{ latest.date }}</div>
     {% else %}<div class="sub">{% trans "لا توجد قراءات بعد" %}</div>{% endif %}
   </div>
@@ -183,7 +183,7 @@
         <div class="fc-r"><span>TSS</span><b><span data-k="tss_out">{{ latest.tss_out|floatformat:0 }}</span> <small>mg/L</small></b></div>
       </div>
       <div class="flow-card">
-        <div class="fc-h" style="color:#c8860a">{% trans " الحمأة" %}</div>
+        <div class="fc-h" style="color:#c8860a">WAS — {% trans "سحب الحمأة" %}</div>
         <div class="fc-r"><span>WAS</span><b><span data-k="was">{{ m.qw_was|floatformat:0 }}</span> <small>{% trans "م³/د" %}</small></b></div>
         <div class="fc-r"><span>RAS</span><b><span data-k="ras">{{ m.qr_ras|floatformat:0 }}</span> <small>{% trans "م³/د" %}</small></b></div>
       </div>
