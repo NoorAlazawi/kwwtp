@@ -1,0 +1,38 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: SSC-MDSS\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Excellent"
+msgstr "ممتاز"
+
+msgid "Good"
+msgstr "جيد"
+
+msgid "Warning"
+msgstr "تحذير"
+
+msgid "Critical"
+msgstr "حرج"
+
+msgid "Low"
+msgstr "منخفض"
+
+msgid "Moderate"
+msgstr "متوسط"
+
+msgid "High"
+msgstr "مرتفع"
+
+msgid "Very High"
+msgstr "مرتفع جداً"
+
+msgid "Fair"
+msgstr "مقبول"
+
+msgid "Poor"
+msgstr "ضعيف"

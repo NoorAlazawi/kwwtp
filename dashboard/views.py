@@ -2,6 +2,7 @@ import json
 from datetime import timedelta
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.utils.translation import gettext as _
 from monitoring.models import DailyReading, Clarifier
 
 CIRC = 276.46
@@ -42,7 +43,9 @@ def dashboard(request):
 
     # الفلترة: الحوض المختار وتاريخ نهاية الفترة
     sel_num = request.GET.get("clarifier")
-    clarifier = next((c for c in clarifiers if str(c.number) == sel_num), clarifiers[0])
+    active_clarifiers = [c for c in clarifiers if c.is_active]
+    _default = active_clarifiers[0] if active_clarifiers else clarifiers[0]
+    clarifier = next((c for c in clarifiers if str(c.number) == sel_num), _default)
 
     qs = DailyReading.objects.filter(clarifier=clarifier)
     all_dates = list(qs.order_by("date").values_list("date", flat=True))
@@ -136,9 +139,9 @@ def dashboard(request):
     gauges = []
     if s:
         gauges = [
-            {"label": "CHI الصحة", "status": s.chi_status, **_gauge(s.chi, good=True)},
-            {"label": "CSI الاستقرار", "status": s.csi_status or "—", **_gauge(s.csi, good=True)},
-            {"label": "CRI المخاطر", "status": s.cri_level, **_gauge(s.cri, good=False)},
+            {"label": "CHI " + _("الصحة"), "status": s.chi_status, **_gauge(s.chi, good=True)},
+            {"label": "CSI " + _("الاستقرار"), "status": s.csi_status or "—", **_gauge(s.csi, good=True)},
+            {"label": "CRI " + _("المخاطر"), "status": s.cri_level, **_gauge(s.cri, good=False)},
         ]
 
     blk = float(latest.sludge_blanket)
@@ -162,6 +165,11 @@ def dashboard(request):
     basins_overview = []
     basins_idx = {}   # بيانات الفهارس لكل حوض — للتبديل الفوري عند الاختيار
     for c in clarifiers:
+        # الحوض المتوقّف: يُعرض كـ"متوقف" ويُستثنى من كل الحسابات والعدّ
+        if not c.is_active:
+            basins_overview.append({"number": c.number, "label": c.label,
+                                    "color": c.ui_color, "has_data": False, "stopped": True})
+            continue
         # قراءة اليوم المختار، أو أقرب قراءة سابقة له
         rd = (DailyReading.objects.filter(clarifier=c, date__lte=end_date)
               .select_related("metric", "scores").order_by("-date").first())
@@ -255,8 +263,14 @@ def monitor_screen(request):
     sel_date = max(min_date, min(sel_date, max_date))
 
     plant = clarifiers[0].plant
-    basins, tot_crit, tot_warn, n_ok = [], 0, 0, 0
+    basins, tot_crit, tot_warn, n_ok, n_active = [], 0, 0, 0, 0
     for c in clarifiers:
+        # الحوض المتوقّف: يُعرض كـ"متوقف" ويُستثنى من العدّ والحالة العامة
+        if not c.is_active:
+            basins.append({"number": c.number, "label": c.label, "color": c.ui_color,
+                           "has_data": False, "stopped": True})
+            continue
+        n_active += 1
         rd = (DailyReading.objects.filter(clarifier=c, date__lte=sel_date)
               .select_related("metric", "scores").order_by("-date").first())
         if not rd:
@@ -294,7 +308,7 @@ def monitor_screen(request):
         "sel_date": sel_date, "min_date": min_date, "max_date": max_date,
         "is_today": sel_date == today,
         "overall": overall, "tot_crit": tot_crit, "tot_warn": tot_warn,
-        "n_ok": n_ok, "n_basins": len(clarifiers),
+        "n_ok": n_ok, "n_basins": n_active,
     })
 
 
@@ -330,6 +344,17 @@ def alarm_edit(request, pk):
         Alarm.objects.filter(parameter=param, reading_id__in=reading_ids).update(action=new_action[:1000])
     d = alarm.reading.date.isoformat()
     return redirect(f"/?clarifier={alarm.reading.clarifier.number}&end={d}#alertsSection")
+
+
+@_login_required
+@require_POST
+def clarifier_toggle(request, pk):
+    """إيقاف/تشغيل حوض — المتوقّف يُستثنى من كل الحسابات والعمليات."""
+    c = get_object_or_404(_Clarifier, pk=pk)
+    c.is_active = not c.is_active
+    c.save(update_fields=["is_active"])
+    nxt = request.POST.get("next") or f"/?clarifier={c.number}"
+    return redirect(nxt)
 
 
 def _rec_back(num, date_str):

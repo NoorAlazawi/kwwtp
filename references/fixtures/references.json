@@ -32,7 +32,7 @@
       "category": "Settling Performance",
       "functional_area": "Settling",
       "lower_limit": "70",
-      "upper_limit": "120",
+      "upper_limit": "140",
       "warning_lower": "50",
       "warning_upper": "150",
       "critical_lower": "50",
@@ -40,7 +40,7 @@
       "direction": "target_range",
       "reference": "Metcalf & Eddy",
       "importance": "Very High",
-      "normal_range_text": "70–120 mL/g"
+      "normal_range_text": "70–140 mL/g"
     }
   },
   {

@@ -1,11 +1,13 @@
 {% load static %}
 {% load cachebust %}
+{% load i18n %}
+{% get_current_language as LANG %}
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ LANG }}" dir="{% if LANG == 'en' %}ltr{% else %}rtl{% endif %}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{% block title %}نظام مراقبة أحواض الترسيب{% endblock %} · SSC-MDSS</title>
+<title>{% block title %}{% trans "نظام مراقبة أحواض الترسيب" %}{% endblock %} · SSC-MDSS</title>
 <link rel="icon" href="{% static_v 'img/logo.png' %}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,44 +22,40 @@
   <aside class="sidebar glass">
     <div class="brand">
       <div class="logo logo-img">
-        <img src="{% static_v 'img/logo.png' %}" alt="مديرية مجاري كربلاء">
+        <img src="{% static_v 'img/logo.png' %}" alt="{% trans "مديرية مجاري كربلاء" %}">
       </div>
       <div>
-        <h1>مراقبة الأحواض</h1>
-        <span>مديرية مجاري كربلاء المقدسة</span>
+        <h1>{% trans "نظام المراقبة الذكي ودعم القرار" %} <span style="color:var(--accent);font-weight:800;font-family:'Oxanium',sans-serif;letter-spacing:.5px">SSC-MDSS</span></h1>
+        <span>{% trans "مديرية مجاري كربلاء المقدسة" %}</span>
       </div>
     </div>
 
     <nav class="nav">
       <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
-        لوحة المراقبة
+        {% trans "لوحة المراقبة" %}
       </a>
       <a href="{% url 'reading_create' %}" class="js-new-reading">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-        إدخال قراءة يومية
+        {% trans "إدخال قراءة يومية" %}
       </a>
       <a href="{% url 'reading_list' %}" class="{% if request.resolver_match.url_name == 'reading_list' %}active{% endif %}">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
-        سجلّ القراءات
+        {% trans "سجلّ القراءات" %}
       </a>
       <a href="{% url 'monitor_screen' %}" class="{% if request.resolver_match.url_name == 'monitor_screen' %}active{% endif %}">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-        شاشة المراقبة
+        {% trans "شاشة المراقبة" %}
       </a>
       {% if user.is_staff or user.is_supervisor or user.is_superuser %}
       <a href="{% url 'user_list' %}" class="{% if request.resolver_match.url_name == 'user_list' or request.resolver_match.url_name == 'user_create' %}active{% endif %}">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        المستخدمون
+        {% trans "المستخدمون" %}
       </a>
       {% endif %}
       <a href="{% url 'password_change' %}" class="{% if request.resolver_match.url_name == 'password_change' %}active{% endif %}">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        تغيير كلمة المرور
-      </a>
-      <a href="/admin/">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.5-2.4 1a7 7 0 0 0-1.7-1l-.3-2.5h-4l-.3 2.5a7 7 0 0 0-1.7 1l-2.4-1-2 3.5 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.5 2.4-1a7 7 0 0 0 1.7 1l.3 2.5h4l.3-2.5a7 7 0 0 0 1.7-1l2.4 1 2-3.5-2-1.5c.06-.33.1-.66.1-1z"/></svg>
-        الإعدادات والحدود
+        {% trans "تغيير كلمة المرور" %}
       </a>
     </nav>
 
@@ -69,11 +67,17 @@
           <div style="color:var(--ink-3);font-size:11px">{{ user.get_role_display }}</div>
         </div>
       </div>
+      <form action="{% url 'set_language' %}" method="post" class="lang-switch">
+        {% csrf_token %}
+        <input name="next" type="hidden" value="{{ request.get_full_path }}">
+        <button type="submit" name="language" value="ar" class="{% if LANG != 'en' %}on{% endif %}">ع</button>
+        <button type="submit" name="language" value="en" class="{% if LANG == 'en' %}on{% endif %}">EN</button>
+      </form>
       <form method="post" action="{% url 'logout' %}">
         {% csrf_token %}
         <button class="logout" type="submit">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-          تسجيل الخروج
+          {% trans "تسجيل الخروج" %}
         </button>
       </form>
     </div>
@@ -99,25 +103,25 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
         </span>
         <div>
-          <h3 id="rmTitle">إدخال قراءة يومية جديدة</h3>
-          <p class="cap">تُحسب المؤشرات والتشخيص تلقائياً بعد الحفظ</p>
+          <h3 id="rmTitle">{% trans "إدخال قراءة يومية جديدة" %}</h3>
+          <p class="cap">{% trans "تُحسب المؤشرات والتشخيص تلقائياً بعد الحفظ" %}</p>
         </div>
       </div>
-      <button type="button" class="modal-x" id="rmClose" aria-label="إغلاق">
+      <button type="button" class="modal-x" id="rmClose" aria-label="{% trans "إغلاق" %}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
       </button>
     </div>
     <form id="readingForm" method="post" action="{% url 'reading_bulk_create' %}">
       {% csrf_token %}
       <div class="modal-body" id="rmBody">
-        <div class="rm-loading"><span class="spinner"></span> جارٍ التحميل…</div>
+        <div class="rm-loading"><span class="spinner"></span> {% trans "جارٍ التحميل…" %}</div>
       </div>
       <div class="modal-foot">
         <button type="submit" class="btn btn-primary" id="rmSubmit">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
-          حفظ ومعالجة
+          {% trans "حفظ ومعالجة" %}
         </button>
-        <button type="button" class="btn btn-ghost" id="rmCancel">إلغاء</button>
+        <button type="button" class="btn btn-ghost" id="rmCancel">{% trans "إلغاء" %}</button>
       </div>
     </form>
   </div>
@@ -126,6 +130,15 @@
 <div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
 
 <script>
+const T = {
+  loading:  "{% trans 'جارٍ التحميل…' %}",
+  loadFail: "{% trans 'تعذّر تحميل النموذج.' %}",
+  saving:   "{% trans 'جارٍ الحفظ…' %}",
+  critTitle:"{% trans 'إنذار حرج — حالات تحتاج معالجة فورية' %}",
+  warnTitle:"{% trans 'تحذير — حالات تحتاج متابعة' %}",
+  okTitle:  "{% trans 'تم الحفظ — كل المؤشرات ضمن المدى الطبيعي' %}",
+  savedN:   "{% trans 'حُفظت القراءات' %}",
+};
 (function(){
   const modal = document.getElementById('readingModal');
   const body  = document.getElementById('rmBody');
@@ -139,7 +152,7 @@
   function closeModal(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
 
   async function load(pk){
-    body.innerHTML = '<div class="rm-loading"><span class="spinner"></span> جارٍ التحميل…</div>';
+    body.innerHTML = '<div class="rm-loading"><span class="spinner"></span> '+T.loading+'</div>';
     submitBtn.disabled = true;
     openModal();
     try{
@@ -151,7 +164,7 @@
       title.textContent = data.title;
       submitBtn.disabled = false;
       const first = body.querySelector('input,select,textarea'); if(first) first.focus();
-    }catch(e){ body.innerHTML = '<div class="msg error">تعذّر تحميل النموذج.</div>'; }
+    }catch(e){ body.innerHTML = '<div class="msg error">'+T.loadFail+'</div>'; }
   }
 
   document.addEventListener('click', function(e){
@@ -170,7 +183,7 @@
     e.preventDefault();
     submitBtn.disabled = true;
     const original = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<span class="spinner"></span> جارٍ الحفظ…';
+    submitBtn.innerHTML = '<span class="spinner"></span> '+T.saving;
     try{
       const res = await fetch(form.action, {
         method:'POST',
@@ -231,9 +244,9 @@
   function showToast(s){
     const level = s.level || 'ok';
     let title, lines=[];
-    if(level==='critical'){ title = `إنذار حرج — ${s.crit} حالة تحتاج معالجة فورية`; }
-    else if(level==='warning'){ title = `تحذير — ${s.warn} حالة تحتاج متابعة`; }
-    else { title = 'تم الحفظ — كل المؤشرات ضمن المدى الطبيعي'; }
+    if(level==='critical'){ title = `${T.critTitle} (${s.crit})`; }
+    else if(level==='warning'){ title = `${T.warnTitle} (${s.warn})`; }
+    else { title = T.okTitle; }
     (s.items||[]).forEach(it=>{ lines.push(`${it.basin} · ${it.param}`); });
     const n = document.createElement('div');
     n.className = 'toast '+level;
@@ -241,10 +254,10 @@
       <div class="toast-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICON[level]}</svg></div>
       <div class="toast-body">
         <b>${title}</b>
-        ${s.saved?`<span class="toast-meta">حُفظت ${s.saved} قراءة · ${s.date||''}</span>`:''}
+        ${s.saved?`<span class="toast-meta">${T.savedN} ${s.saved} · ${s.date||''}</span>`:''}
         ${lines.length?`<ul>${lines.slice(0,4).map(l=>`<li>${l}</li>`).join('')}</ul>`:''}
       </div>
-      <button class="toast-x" aria-label="إغلاق">&times;</button>`;
+      <button class="toast-x" aria-label="{% trans "إغلاق" %}">&times;</button>`;
     wrap.appendChild(n);
     requestAnimationFrame(()=>n.classList.add('in'));
     const close=()=>{ n.classList.remove('in'); setTimeout(()=>n.remove(),300); };

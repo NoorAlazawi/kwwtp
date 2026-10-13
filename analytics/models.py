@@ -31,7 +31,7 @@ class Diagnosis(models.Model):
 
     class Status(models.TextChoices):
         NORMAL = "normal", "طبيعي"
-        UNDERLOADED = "underloaded", "حمل منخفض"
+        UNDERLOADED = "underloaded", "تحذير"
         WARNING = "warning", "تحذير"
         CRITICAL = "critical", "حرج"
 

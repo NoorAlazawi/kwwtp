@@ -1,11 +1,13 @@
 {% load static %}
 {% load cachebust %}
+{% load i18n %}
+{% get_current_language as LANG %}
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ LANG }}" dir="{% if LANG == 'en' %}ltr{% else %}rtl{% endif %}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>شاشة المراقبة — SSC-MDSS</title>
+<title>{% trans "شاشة المراقبة" %} — SSC-MDSS</title>
 <link rel="icon" href="{% static_v 'img/logo.png' %}">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Oxanium:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -107,6 +109,8 @@ body{font-family:'Cairo',sans-serif;color:var(--ink);min-height:100vh;padding:18
 .bc-op .fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--accentD),var(--accent))}
 .bc-op .v{font-family:'Oxanium';font-weight:800;font-size:14px;color:var(--accent)}
 .bc-empty{text-align:center;color:var(--ink3);padding:36px 0;font-size:13px}
+.bcard.s-stopped{opacity:.6}
+.bcard.s-stopped .bc-dot{background:#6f879f !important;box-shadow:none !important}
 
 .mon-foot{text-align:center;margin-top:18px;font-size:11.5px;color:var(--ink3)}
 .mon-foot b{color:var(--ink2)}
@@ -133,23 +137,23 @@ body{font-family:'Cairo',sans-serif;color:var(--ink);min-height:100vh;padding:18
 
 <div class="crit-alarm" id="critAlarm" style="display:none">
   <span class="ca-ico">⚠</span>
-  <span class="ca-txt">إنذار حرج — <b id="caCount">0</b> حوض في حالة حرجة: <span id="caList"></span></span>
-  <button class="ca-ack" id="caAck">🔕 تمت الملاحظة</button>
+  <span class="ca-txt">{% trans "إنذار حرج" %} — <b id="caCount">0</b> {% trans "حوض في حالة حرجة:" %} <span id="caList"></span></span>
+  <button class="ca-ack" id="caAck">🔕 {% trans "تمت الملاحظة" %}</button>
 </div>
 
 <div class="mon-top">
   <div class="mon-brand">
-    <div class="mon-logo"><img src="{% static_v 'img/logo.png' %}" alt="مديرية مجاري كربلاء"></div>
+    <div class="mon-logo"><img src="{% static_v 'img/logo.png' %}" alt="{% trans "مديرية مجاري كربلاء" %}"></div>
     <div>
-      <h1>نظام المراقبة الذكي ودعم القرار<span class="abbr">SSC-MDSS</span></h1>
-      <span>Smart Secondary Clarifier Monitoring &amp; Decision Support System — مديرية مجاري كربلاء المقدسة</span>
+      <h1>{% trans "نظام المراقبة الذكي ودعم القرار" %}<span class="abbr">SSC-MDSS</span></h1>
+      <span>Smart Secondary Clarifier Monitoring &amp; Decision Support System — {% trans "مديرية مجاري كربلاء المقدسة" %}</span>
     </div>
   </div>
   <div class="mon-meta">
     {% if has_data %}
     <div class="mon-status {{ overall }}">
       <span class="d"></span>
-      {% if overall == 'critical' %}حالة حرجة · {{ tot_crit }} إنذار{% elif overall == 'warning' %}تحذير · {{ tot_warn }} تنبيه{% else %}كل الأحواض طبيعية{% endif %}
+      {% if overall == 'critical' %}{% trans "حالة حرجة" %} · {{ tot_crit }} {% trans "إنذار" %}{% elif overall == 'warning' %}{% trans "تحذير" %} · {{ tot_warn }} {% trans "تنبيه" %}{% else %}{% trans "كل الأحواض طبيعية" %}{% endif %}
     </div>
     {% endif %}
     <div class="mon-clock" id="clock">--:--:--<span class="d" id="cdate">—</span></div>
@@ -157,40 +161,40 @@ body{font-family:'Cairo',sans-serif;color:var(--ink);min-height:100vh;padding:18
 </div>
 
 {% if not has_data %}
-<div class="bcard"><div class="bc-empty">لا توجد بيانات لعرضها بعد.</div></div>
+<div class="bcard"><div class="bc-empty">{% trans "لا توجد بيانات لعرضها بعد." %}</div></div>
 {% else %}
 
 <div class="mon-bar">
   <div class="mon-date">
     <label>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-      يوم العرض
+      {% trans "يوم العرض" %}
     </label>
     <input type="date" id="dateSel" value="{{ sel_date|date:'Y-m-d' }}"
            min="{{ min_date|date:'Y-m-d' }}" max="{{ max_date|date:'Y-m-d' }}">
-    {% if not is_today %}<a class="today-btn" href="{% url 'monitor_screen' %}">↩ اليوم</a>{% endif %}
+    {% if not is_today %}<a class="today-btn" href="{% url 'monitor_screen' %}">↩ {% trans "اليوم" %}</a>{% endif %}
   </div>
   <div class="mon-sum">
-    <span class="chip-ok">طبيعي <b>{{ n_ok }}</b></span> ·
-    <span class="chip-w">تحذير <b>{{ tot_warn }}</b></span> ·
-    <span class="chip-c">حرج <b>{{ tot_crit }}</b></span> ·
-    <span style="color:var(--ink3)">من <b>{{ n_basins }}</b> أحواض</span>
+    <span class="chip-ok">{% trans "طبيعي" %} <b>{{ n_ok }}</b></span> ·
+    <span class="chip-w">{% trans "تحذير" %} <b>{{ tot_warn }}</b></span> ·
+    <span class="chip-c">{% trans "حرج" %} <b>{{ tot_crit }}</b></span> ·
+    <span style="color:var(--ink3)">{% trans "من" %} <b>{{ n_basins }}</b> {% trans "أحواض" %}</span>
   </div>
   <div class="mon-tools">
     <a href="{% url 'dashboard' %}" class="mon-btn">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
-      اللوحة الكاملة
+      {% trans "اللوحة الكاملة" %}
     </a>
     <button class="mon-btn" id="fsBtn">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
-      ملء الشاشة
+      {% trans "ملء الشاشة" %}
     </button>
   </div>
 </div>
 
 <div class="basin-grid">
   {% for b in basins %}
-  <div class="bcard s-{{ b.state|default:'ok' }} {% if b.state == 'critical' %}s-critical{% endif %}" style="--bc:{{ b.color }}">
+  <div class="bcard s-{{ b.state|default:'ok' }} {% if b.state == 'critical' %}s-critical{% endif %} {% if b.stopped %}s-stopped{% endif %}" style="--bc:{{ b.color }}">
     <div class="bc-head">
       <span class="bc-name">{{ b.label }}</span>
       <div class="bc-right">
@@ -205,21 +209,21 @@ body{font-family:'Cairo',sans-serif;color:var(--ink);min-height:100vh;padding:18
           <circle cx="52" cy="52" r="44" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/>
           {% if b.chi %}<circle cx="52" cy="52" r="44" fill="none" stroke="{{ b.chi.color }}" stroke-width="10" stroke-linecap="round" stroke-dasharray="276.46" stroke-dashoffset="{{ b.chi.offset }}" style="filter:drop-shadow(0 0 5px {{ b.chi.color }})"/>{% endif %}
         </svg><div class="rv" style="color:{% if b.chi %}{{ b.chi.color }}{% else %}#6f879f{% endif %}">{% if b.chi %}{{ b.chi.value }}{% else %}—{% endif %}</div></div>
-        <div class="rl">CHI الصحة</div>
+        <div class="rl">CHI {% trans "الصحة" %}</div>
       </div>
       <div class="ring">
         <div class="rw"><svg width="70" height="70" viewBox="0 0 104 104">
           <circle cx="52" cy="52" r="44" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/>
           {% if b.csi %}<circle cx="52" cy="52" r="44" fill="none" stroke="{{ b.csi.color }}" stroke-width="10" stroke-linecap="round" stroke-dasharray="276.46" stroke-dashoffset="{{ b.csi.offset }}" style="filter:drop-shadow(0 0 5px {{ b.csi.color }})"/>{% endif %}
         </svg><div class="rv" style="color:{% if b.csi %}{{ b.csi.color }}{% else %}#6f879f{% endif %}">{% if b.csi %}{{ b.csi.value }}{% else %}—{% endif %}</div></div>
-        <div class="rl">CSI الاستقرار</div>
+        <div class="rl">CSI {% trans "الاستقرار" %}</div>
       </div>
       <div class="ring">
         <div class="rw"><svg width="70" height="70" viewBox="0 0 104 104">
           <circle cx="52" cy="52" r="44" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/>
           {% if b.cri %}<circle cx="52" cy="52" r="44" fill="none" stroke="{{ b.cri.color }}" stroke-width="10" stroke-linecap="round" stroke-dasharray="276.46" stroke-dashoffset="{{ b.cri.offset }}" style="filter:drop-shadow(0 0 5px {{ b.cri.color }})"/>{% endif %}
         </svg><div class="rv" style="color:{% if b.cri %}{{ b.cri.color }}{% else %}#6f879f{% endif %}">{% if b.cri %}{{ b.cri.value }}{% else %}—{% endif %}</div></div>
-        <div class="rl">CRI المخاطر</div>
+        <div class="rl">CRI {% trans "المخاطر" %}</div>
       </div>
     </div>
     <div class="bc-metrics">
@@ -230,31 +234,39 @@ body{font-family:'Cairo',sans-serif;color:var(--ink);min-height:100vh;padding:18
     </div>
     <div class="bc-blanket" style="color:{{ b.bcol }}">
       <span class="d" style="background:{{ b.bcol }}"></span>
-      طبقة الحمأة {{ b.blanket }} م · {{ b.bstate }}
+      {% trans "طبقة الحمأة" %} {{ b.blanket }} {% trans "م" %} · {% trans b.bstate %}
     </div>
     <div class="bc-op">
-      <span class="lbl">تقييم الحوض</span>
+      <span class="lbl">{% trans "تقييم الحوض" %}</span>
       <div class="bar"><div class="fill" style="width:{{ b.operator|default:0 }}%"></div></div>
       <span class="v">{{ b.operator|default:"—" }}</span>
     </div>
+    {% elif b.stopped %}
+    <div class="bc-empty">⏸ {% trans "متوقف" %}<br><span style="font-size:11px">{% trans "مُستثنى من الحسابات" %}</span></div>
     {% else %}
-    <div class="bc-empty">لا توجد بيانات لهذا الحوض</div>
+    <div class="bc-empty">{% trans "لا توجد بيانات لهذا الحوض" %}</div>
     {% endif %}
   </div>
   {% endfor %}
 </div>
 
 <div class="mon-foot">
-  يوم العرض: <b>{{ sel_date|date:'Y/m/d' }}</b>{% if is_today %} · تُحدَّث تلقائياً كل ٣٠ ثانية{% endif %} · SSC-MDSS
+  {% trans "يوم العرض" %}: <b>{{ sel_date|date:'Y/m/d' }}</b>{% if is_today %} · {% trans "تُحدَّث تلقائياً كل ٣٠ ثانية" %}{% endif %} · SSC-MDSS
 </div>
 {% endif %}
 
 <script>
+const MT = {
+  days: ["{% trans 'الأحد' %}","{% trans 'الإثنين' %}","{% trans 'الثلاثاء' %}","{% trans 'الأربعاء' %}","{% trans 'الخميس' %}","{% trans 'الجمعة' %}","{% trans 'السبت' %}"],
+  notifTitle: "{% trans 'إنذار حرج' %} — SSC-MDSS",
+  inCrit: "{% trans 'حوض في حالة حرجة:' %}",
+  acked: "✓ {% trans 'تمت الملاحظة' %}",
+};
 function tick(){
   const n=new Date(), p=x=>String(x).padStart(2,'0');
   const el=document.getElementById('clock'); if(!el) return;
   el.childNodes[0].nodeValue = p(n.getHours())+':'+p(n.getMinutes())+':'+p(n.getSeconds());
-  const days=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  const days=MT.days;
   document.getElementById('cdate').textContent = days[n.getDay()]+' '+p(n.getDate())+'/'+p(n.getMonth()+1)+'/'+n.getFullYear();
 }
 tick(); setInterval(tick,1000);
@@ -307,11 +319,11 @@ if(fs) fs.addEventListener('click',()=>{ if(!document.fullscreenElement){documen
       ['click','keydown','touchstart','mousemove'].forEach(ev=>document.addEventListener(ev,kick,{once:true}));
     }
     // إشعار سطح المكتب (اختياري)
-    try{ if(window.Notification){ if(Notification.permission==='granted'){new Notification('إنذار حرج — SSC-MDSS',{body:crit.length+' حوض في حالة حرجة: '+crit.join('، ')});}
+    try{ if(window.Notification){ if(Notification.permission==='granted'){new Notification(MT.notifTitle,{body:crit.length+' '+MT.inCrit+' '+crit.join('، ')});}
       else if(Notification.permission!=='denied'){Notification.requestPermission();} } }catch(e){}
   } else {
     banner.classList.add('acked');
-    document.getElementById('caAck').textContent='✓ تمت الملاحظة';
+    document.getElementById('caAck').textContent=MT.acked;
   }
 
   // زر "تمت الملاحظة": يكتم الصوت ويبقي الإشعار مرئياً
@@ -319,7 +331,7 @@ if(fs) fs.addEventListener('click',()=>{ if(!document.fullscreenElement){documen
     stop();
     try{localStorage.setItem(ACKK,sig);}catch(e){}
     banner.classList.add('acked');
-    this.textContent='✓ تمت الملاحظة';
+    this.textContent=MT.acked;
   });
 })();
 

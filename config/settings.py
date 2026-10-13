@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # تحميل متغيّرات البيئة من ملف .env إن وُجد
 try:
     from dotenv import load_dotenv
-    load_dotenv(BASE_DIR / ".env")
+    load_dotenv(BASE_DIR / ".env", override=True)
 except ImportError:
     pass
 
@@ -69,6 +69,7 @@ TEMPLATES = [
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
+                "django.template.context_processors.i18n",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ],
@@ -129,7 +130,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # اللغة والمنطقة
-LANGUAGE_CODE = "ar"
+LANGUAGE_CODE = "ar"               # الافتراضي: العربية
+LANGUAGES = [("ar", "العربية"), ("en", "English")]
+LOCALE_PATHS = [BASE_DIR / "locale"]
 TIME_ZONE = "Asia/Baghdad"
 USE_I18N = True
 USE_TZ = True

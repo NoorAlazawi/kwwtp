@@ -1,15 +1,15 @@
-{% extends "base.html" %}
-{% block title %}{% if editing %}تعديل قراءة{% else %}إدخال قراءة يومية{% endif %}{% endblock %}
+{% extends "base.html" %}{% load i18n %}
+{% block title %}{% if editing %}{% trans "تعديل قراءة" %}{% else %}{% trans "إدخال قراءة يومية" %}{% endif %}{% endblock %}
 
 {% block content %}
 <div class="topbar glass">
   <div>
-    <h2>{% if editing %}تعديل قراءة{% else %}إدخال قراءة يومية{% endif %}</h2>
-    <div class="sub">أدخل قيم اليوم — سيُحسب التشخيص والمؤشرات تلقائياً بعد الحفظ</div>
+    <h2>{% if editing %}{% trans "تعديل قراءة" %}{% else %}{% trans "إدخال قراءة يومية" %}{% endif %}</h2>
+    <div class="sub">{% trans "أدخل قيم اليوم — سيُحسب التشخيص والمؤشرات تلقائياً بعد الحفظ" %}</div>
   </div>
   <a href="{% url 'reading_list' %}" class="btn btn-ghost">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-    عودة
+    {% trans "عودة" %}
   </a>
 </div>
 
@@ -19,9 +19,9 @@
   <div class="form-actions">
     <button type="submit" class="btn btn-primary">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
-      {% if editing %}حفظ التعديلات{% else %}حفظ ومعالجة{% endif %}
+      {% if editing %}{% trans "حفظ التعديلات" %}{% else %}{% trans "حفظ ومعالجة" %}{% endif %}
     </button>
-    <a href="{% url 'reading_list' %}" class="btn btn-ghost">إلغاء</a>
+    <a href="{% url 'reading_list' %}" class="btn btn-ghost">{% trans "إلغاء" %}</a>
   </div>
 </form>
 {% endblock %}

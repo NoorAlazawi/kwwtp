@@ -68,9 +68,9 @@ def reading_form(request):
             "action": reverse("reading_edit", args=[instance.pk]),
             "title": f"تعديل قراءة — {instance.clarifier.label} · {instance.date}",
         })
-    # إدخال جماعي
+    # إدخال جماعي — الأحواض العاملة فقط (المتوقّفة مستثناة)
     form = BulkReadingForm()
-    clarifiers = Clarifier.objects.select_related("plant").order_by("number")
+    clarifiers = Clarifier.objects.filter(is_active=True).select_related("plant").order_by("number")
     html = render_to_string("monitoring/_reading_bulk.html",
                             {"form": form, "clarifiers": clarifiers}, request=request)
     return JsonResponse({
@@ -85,9 +85,10 @@ def reading_bulk_create(request):
     """يحفظ قراءة واحدة لكل حوض بقيم مشتركة، وطبقة حمأة خاصة بكل حوض.
     التصريف المُدخَل كلّي ويُقسَّم على عدد الأحواض العاملة.
     """
-    clarifiers = list(Clarifier.objects.select_related("plant").order_by("number"))
+    # الأحواض العاملة فقط — الحوض المتوقّف مستثنى من الإدخال وتوزيع التصريف والحسابات
+    clarifiers = list(Clarifier.objects.filter(is_active=True).select_related("plant").order_by("number"))
     plant = clarifiers[0].plant if clarifiers else None
-    n_tanks = (plant.clarifiers_in_service or plant.num_clarifiers or len(clarifiers)) if plant else len(clarifiers)
+    n_tanks = len(clarifiers) or 1   # التصريف الكلّي يُقسَّم على عدد الأحواض العاملة فقط
 
     if request.method != "POST":
         form = BulkReadingForm()

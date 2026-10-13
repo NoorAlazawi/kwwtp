@@ -1,0 +1,650 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: SSC-MDSS\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "(م) — القيمة المختلفة بين الأحواض"
+msgstr "(m) — differs between basins"
+
+msgid "BOD الخارج"
+msgstr "Effluent BOD"
+
+msgid "COD الخارج"
+msgstr "Effluent COD"
+
+msgid "TSS الخارج"
+msgstr "Effluent TSS"
+
+msgid "SVI وطبقة الحمأة — 7 أيام"
+msgstr "SVI & Sludge Blanket — 7 days"
+
+msgid "آخر تحديث"
+msgstr "Last update"
+
+msgid "آخر يوم — حالة كل مؤشر والإجراء الموصى به"
+msgstr "Latest day — each indicator's status and recommended action"
+
+msgid "أحواض"
+msgstr "basins"
+
+msgid "أحواض الترسيب الثانوي SC-1 … SC-8"
+msgstr "Secondary clarifiers SC-1 … SC-8"
+
+msgid "أدخل طبقة الحمأة لحوضٍ واحد على الأقل."
+msgstr "Enter the sludge blanket for at least one basin."
+
+msgid "أدخل قيم اليوم — سيُحسب التشخيص والمؤشرات تلقائياً بعد الحفظ"
+msgstr ""
+"Enter today's values — diagnosis and indices are computed automatically "
+"after saving"
+
+msgid "أسبوع ينتهي"
+msgstr "Week ending"
+
+msgid "أنشئ حساباً بدور وصلاحيات"
+msgstr "Create an account with a role and permissions"
+
+msgid "أو اختر تاريخ النهاية"
+msgstr "Or pick an end date"
+
+msgid "أُكّد"
+msgstr "Confirmed"
+
+msgid "إجراء"
+msgstr "Action"
+
+msgid "إدارة المستخدمين"
+msgstr "User management"
+
+msgid "إدخال قراءة يومية"
+msgstr "New Daily Reading"
+
+msgid "إدخال قراءة يومية جديدة"
+msgstr "New Daily Reading"
+
+msgid "إضافة"
+msgstr "Add"
+
+msgid "إضافة مستخدم جديد"
+msgstr "Add a new user"
+
+msgid "إلغاء"
+msgstr "Cancel"
+
+msgid "إنذار"
+msgstr "alarm"
+
+msgid "إنذار حرج"
+msgstr "Critical alarm"
+
+msgid "إنذار حرج — حالات تحتاج معالجة فورية"
+msgstr "Critical alarm — cases needing immediate action"
+
+msgid "إنذارات نشطة — الإجراء قابل للتعديل ويُطبَّق على الحالات المشابهة"
+msgstr "Active alarms — the action is editable and applies to similar cases"
+
+msgid "إنشاء المستخدم"
+msgstr "Create user"
+
+msgid "إيقاف الحوض"
+msgstr "Stop basin"
+
+msgid ""
+"إيقاف هذا الحوض؟ سيُستثنى من كل الحسابات وإدخال القراءات حتى إعادة تشغيله."
+msgstr ""
+"Stop this basin? It will be excluded from all calculations and reading entry"
+" until restarted."
+
+msgid "ابحث بالتاريخ أو الحوض…"
+msgstr "Search by date or basin…"
+
+msgid "ابدأ بإدخال أو استيراد القراءات لعرض الحوض المتحرك والمؤشرات."
+msgstr ""
+"Start by entering or importing readings to view the live basin and indices."
+
+msgid "اختر الحوض"
+msgstr "Select basin"
+
+msgid ""
+"استعرض القراءات السابقة · عدّلها أو أضِف قراءة جديدة · تتبّع المؤشرات "
+"بيانياً"
+msgstr ""
+"Browse past readings · edit or add a new one · track indicators graphically"
+
+msgid "اسم المستخدم"
+msgstr "Username"
+
+msgid "اسم المستخدم أو كلمة المرور غير صحيحة."
+msgstr "Incorrect username or password."
+
+msgid "اكتب توصية لهذا اليوم…"
+msgstr "Write a recommendation for this day…"
+
+msgid "الأحد"
+msgstr "Sunday"
+
+msgid "الأخيرة"
+msgstr "Last"
+
+msgid "الأداء العام"
+msgstr "Overall performance"
+
+msgid "الأربعاء"
+msgstr "Wednesday"
+
+msgid "الأولى"
+msgstr "First"
+
+msgid "الإثنين"
+msgstr "Monday"
+
+msgid "الإجراء"
+msgstr "Action"
+
+msgid "الإعدادات والحدود"
+msgstr "Settings & Thresholds"
+
+msgid "الاستقرار"
+msgstr "Stability"
+
+msgid "الاسم"
+msgstr "Name"
+
+msgid "البريد"
+msgstr "Email"
+
+msgid "التاريخ"
+msgstr "Date"
+
+msgid "التالي"
+msgstr "Next"
+
+msgid "التشخيص الذكي"
+msgstr "Smart Diagnosis"
+
+msgid "التصريف"
+msgstr "Flow"
+
+msgid "التصريف Q"
+msgstr "Flow Q"
+
+msgid "التصريف Q (م³/ي)"
+msgstr "Flow Q (m³/day)"
+
+msgid "التصريف الكلّي للمحطة — يُقسَّم على عدد الأحواض تلقائياً"
+msgstr "Total plant flow — split across basins automatically"
+
+msgid "التنبيهات"
+msgstr "Alerts"
+
+msgid "التنبيهات والتوصيات"
+msgstr "Alerts & Recommendations"
+
+msgid "التوصيات التشغيلية"
+msgstr "Operational Recommendations"
+
+msgid "الثلاثاء"
+msgstr "Tuesday"
+
+msgid "الجمعة"
+msgstr "Friday"
+
+msgid "الحالة"
+msgstr "Status"
+
+msgid "الحالة:"
+msgstr "Status:"
+
+msgid "الحمأة"
+msgstr "Blanket"
+
+msgid "الحوض"
+msgstr "Basin"
+
+msgid "الخارج"
+msgstr "Outlet"
+
+msgid "الخميس"
+msgstr "Thursday"
+
+msgid "الداخل"
+msgstr "Inlet"
+
+msgid "الدور"
+msgstr "Role"
+
+msgid "السابق"
+msgstr "Previous"
+
+msgid "السبت"
+msgstr "Saturday"
+
+msgid "الصحة"
+msgstr "Health"
+
+msgid "الفترة (7 أيام تنتهي في)"
+msgstr "Period (7 days ending)"
+
+msgid "الفترة المعروضة"
+msgstr "Displayed period"
+
+msgid "الفهارس المركّبة"
+msgstr "Composite Indices"
+
+msgid "القراءات المعروضة أدناه — اختر المؤشر"
+msgstr "Readings shown below — choose an indicator"
+
+msgid "القراءات المُدخلة"
+msgstr "Entered Readings"
+
+msgid "القيم المشتركة لكل الأحواض"
+msgstr "Shared values for all basins"
+
+msgid "القيمة"
+msgstr "Value"
+
+msgid "الكل"
+msgstr "All"
+
+msgid "اللوحة الكاملة"
+msgstr "Full Dashboard"
+
+msgid "المؤشر"
+msgstr "Indicator"
+
+msgid "المؤشرات الهيدروليكية والتحميل"
+msgstr "Hydraulic and loading indicators"
+
+msgid "المخاطر"
+msgstr "Risk"
+
+msgid "المستخدم"
+msgstr "User"
+
+msgid "المستخدمون"
+msgstr "Users"
+
+msgid "النظام الذكي لمراقبة أحواض الترسيب الثانوي ودعم القرار"
+msgstr "Smart Secondary Clarifier Monitoring & Decision Support System"
+
+msgid "الهاتف"
+msgstr "Phone"
+
+msgid "اليوم"
+msgstr "Today"
+
+msgid "انقر أي حوض لعرض تفاصيله"
+msgstr "click any basin to view its details"
+
+msgid "تبديل التنفيذ"
+msgstr "Toggle done"
+
+msgid "تحذير"
+msgstr "Warning"
+
+msgid "تحذير — حالات تحتاج متابعة"
+msgstr "Warning — cases needing follow-up"
+
+msgid "تراكيز الملوثات في المياه الخارجة — 7 أيام"
+msgstr "Effluent Pollutant Concentrations — 7 days"
+
+msgid "تسجيل الخروج"
+msgstr "Log out"
+
+msgid "تسجيل الدخول"
+msgstr "Sign in"
+
+msgid "تشغيل"
+msgstr "Play"
+
+msgid "تشغيل الحوض"
+msgstr "Start basin"
+
+msgid "تعديل القراءة"
+msgstr "Edit reading"
+
+msgid "تعديل قراءة"
+msgstr "Edit Reading"
+
+msgid "تعذّر تحميل النموذج."
+msgstr "Failed to load the form."
+
+msgid "تغيير كلمة المرور"
+msgstr "Change Password"
+
+msgid "تقييم الحوض"
+msgstr "Basin score"
+
+msgid "تقييم حوض الترسيب الثانوي"
+msgstr "Secondary clarifier score"
+
+msgid "تكرّر"
+msgstr "recurred"
+
+msgid "تم الحفظ — كل المؤشرات ضمن المدى الطبيعي"
+msgstr "Saved — all indicators within normal range"
+
+msgid "تمت الملاحظة"
+msgstr "Acknowledged"
+
+msgid "تنبيه"
+msgstr "alert"
+
+msgid "توصيات يوم"
+msgstr "Recommendations for"
+
+msgid "تُحدَّث تلقائياً كل ٣٠ ثانية"
+msgstr "Auto-refreshes every 30 seconds"
+
+msgid "تُحسب المؤشرات والتشخيص تلقائياً بعد الحفظ"
+msgstr "Indices and diagnosis are computed automatically after saving"
+
+msgid "تُدخَل مرّة واحدة — تُطبَّق على الأحواض الثمانية"
+msgstr "Entered once — applied to all eight basins"
+
+msgid "جارٍ التحميل…"
+msgstr "Loading…"
+
+msgid "جارٍ الحفظ…"
+msgstr "Saving…"
+
+msgid "حالة حرجة"
+msgstr "Critical"
+
+msgid "حالة كل الأحواض"
+msgstr "All Basins Status"
+
+msgid "حدِّث كلمة مرور حسابك"
+msgstr "Update your account password"
+
+msgid "حذف"
+msgstr "Delete"
+
+msgid "حذف هذه التوصية؟"
+msgstr "Delete this recommendation?"
+
+msgid "حرج"
+msgstr "Critical"
+
+msgid "حفظ التعديلات"
+msgstr "Save changes"
+
+msgid ""
+"حفظ الحل (تغذية رجعية: يُطبَّق على كل الحالات المشابهة الحالية والمستقبلية)"
+msgstr ""
+"Save the solution (feedback: applied to all similar current and future "
+"cases)"
+
+msgid "حفظ كلمة المرور"
+msgstr "Save password"
+
+msgid "حفظ ومعالجة"
+msgstr "Save & Process"
+
+msgid "حل مُتعلّم"
+msgstr "Learned solution"
+
+msgid "حل مُتعلّم من تعديلات سابقة (تغذية رجعية)"
+msgstr "Learned solution from previous edits (feedback)"
+
+msgid "حوض الترسيب"
+msgstr "Clarifier"
+
+msgid "حوض الترسيب الثانوي"
+msgstr "Secondary Clarifier"
+
+msgid "حوض في حالة حرجة:"
+msgstr "basin(s) in critical state:"
+
+msgid "حُفظت القراءات"
+msgstr "Readings saved"
+
+msgid "خارج"
+msgstr "out"
+
+msgid "دخول"
+msgstr "Sign in"
+
+msgid "سجلّ القراءات"
+msgstr "Readings Log"
+
+msgid "سجلّ القراءات وتعديلها"
+msgstr "Readings Log & Editing"
+
+msgid "سحب الحمأة"
+msgstr "Sludge wasting"
+
+msgid "شاشة المراقبة"
+msgstr "Monitor Screen"
+
+msgid "صفحة"
+msgstr "Page"
+
+msgid "طبقة الحمأة"
+msgstr "Sludge blanket"
+
+msgid "طبقة الحمأة (م)"
+msgstr "Sludge blanket (m)"
+
+msgid "طبقة الحمأة لكل حوض"
+msgstr "Sludge blanket per basin"
+
+msgid "طبيعي"
+msgstr "Normal"
+
+msgid "عدد مرّات تكرار هذا النمط في السجلّ"
+msgstr "How many times this pattern recurred in the record"
+
+msgid ""
+"عدّل الحل ثم احفظ — سيُطبَّق تلقائياً كلما تكرّر هذا النمط (تنبؤ بالحلول)"
+msgstr ""
+"Edit the solution then save — it is applied automatically whenever this "
+"pattern recurs (solution prediction)"
+
+msgid "عرض المستخدمين وإضافة حسابات جديدة"
+msgstr "View users and add new accounts"
+
+msgid "عودة"
+msgstr "Back"
+
+msgid "عودة للقائمة"
+msgstr "Back to list"
+
+msgid "فقط"
+msgstr "only"
+
+msgid "قراءة إجمالاً"
+msgstr "readings total"
+
+msgid "قراءة جديدة"
+msgstr "New reading"
+
+msgid "كفاءة الإزالة"
+msgstr "Removal efficiency"
+
+msgid "كفاءة الإزالة (%)"
+msgstr "Removal efficiency (%)"
+
+msgid "كل الأحواض طبيعية"
+msgstr "All basins normal"
+
+msgid "كلمة المرور"
+msgstr "Password"
+
+msgid "لا توجد إنذارات نشطة."
+msgstr "No active alarms."
+
+msgid "لا توجد بيانات"
+msgstr "No data"
+
+msgid "لا توجد بيانات لعرضها بعد."
+msgstr "No data to display yet."
+
+msgid "لا توجد بيانات لهذا الحوض"
+msgstr "No data for this basin"
+
+msgid "لا توجد توصيات بعد — أضف أول توصية أعلاه."
+msgstr "No recommendations yet — add the first one above."
+
+msgid "لا توجد قراءات بعد"
+msgstr "No readings yet"
+
+msgid "لا توجد قراءات بعد لهذا الحوض. ابدأ بإضافة قراءة جديدة."
+msgstr "No readings yet for this basin. Start by adding a new reading."
+
+msgid "لا توجد نتائج مطابقة للبحث."
+msgstr "No results match the search."
+
+msgid "لمحة سريعة ليوم"
+msgstr "Quick snapshot for"
+
+msgid "لوحة المراقبة"
+msgstr "Dashboard"
+
+msgid "لوحة المراقبة الحيّة"
+msgstr "Live Dashboard"
+
+msgid "لوحة المراقبة — الحوض المتحرك"
+msgstr "Dashboard — Selected Basin"
+
+msgid "م"
+msgstr "m"
+
+msgid "م³/د"
+msgstr "m³/d"
+
+msgid "م³/ي"
+msgstr "m³/day"
+
+msgid "مؤشرات حيّة تُحدَّث من البيانات"
+msgstr "Live indicators updated from the data"
+
+msgid "مباشر"
+msgstr "Live"
+
+msgid "متوقف"
+msgstr "Stopped"
+
+msgid "متوقف — مُستثنى من الحسابات"
+msgstr "Stopped — excluded from calculations"
+
+msgid "مخطّط الأحواض الثمانية — SC-1 إلى SC-8"
+msgstr "Layout of the eight basins — SC-1 to SC-8"
+
+msgid "مديرية مجاري كربلاء المقدسة"
+msgstr "Holy Karbala Sewerage Directorate"
+
+msgid "مرة"
+msgstr "times"
+
+msgid "مرحباً بعودتك"
+msgstr "Welcome back"
+
+msgid "مستخدم جديد"
+msgstr "New user"
+
+msgid "مقارنة الأداء مع القيم التصميمية"
+msgstr "Performance vs. Design Values"
+
+msgid "ملء الشاشة"
+msgstr "Fullscreen"
+
+msgid "من"
+msgstr "of"
+
+msgid "موقوف"
+msgstr "Suspended"
+
+msgid "مُستثنى من الحسابات"
+msgstr "Excluded from calculations"
+
+msgid "نشط"
+msgstr "Active"
+
+msgid "نظام المراقبة الذكي ودعم القرار"
+msgstr "Smart Monitoring & Decision Support System"
+
+msgid "نظام مراقبة أحواض الترسيب"
+msgstr "Clarifier Monitoring System"
+
+msgid "يوم"
+msgstr "Day"
+
+msgid "يوم العرض"
+msgstr "Display day"
+
+msgid "منخفض"
+msgstr "Low"
+
+msgid "مرتفع"
+msgstr "High"
+
+msgid "إدخال قراءة"
+msgstr "New reading"
+
+msgid "التصريف الداخل"
+msgstr "Inlet flow"
+
+msgid "م³/يوم"
+msgstr "m³/day"
+
+msgid "إعادة تشغيل هذا الحوض وإدراجه في الحسابات؟"
+msgstr "Restart this basin and include it in calculations?"
+
+msgid "المعروض"
+msgstr "Shown"
+
+msgid "قراءة"
+msgstr "readings"
+
+msgid "تصفية حسب الحوض"
+msgstr "Filter by basin"
+
+msgid "اتجاه المؤشرات عبر الزمن"
+msgstr "Indicator trends over time"
+
+msgid "مستخدم"
+msgstr "users"
+
+msgid "مديرية مجاري كربلاء"
+msgstr "Karbala Sewerage Directorate"
+
+msgid "إغلاق"
+msgstr "Close"
+
+msgid "انقر للانتقال إلى التنبيهات والتوصيات"
+msgstr "Click to go to Alerts & Recommendations"
+
+msgid "Excellent"
+msgstr "Excellent"
+
+msgid "Good"
+msgstr "Good"
+
+msgid "Warning"
+msgstr "Warning"
+
+msgid "Critical"
+msgstr "Critical"
+
+msgid "Low"
+msgstr "Low"
+
+msgid "Moderate"
+msgstr "Moderate"
+
+msgid "High"
+msgstr "High"
+
+msgid "Very High"
+msgstr "Very High"
+
+msgid "Fair"
+msgstr "Fair"
+
+msgid "Poor"
+msgstr "Poor"

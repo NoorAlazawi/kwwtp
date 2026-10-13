@@ -1,17 +1,17 @@
-{% extends "base.html" %}
-{% block title %}المستخدمون{% endblock %}
+{% extends "base.html" %}{% load i18n %}
+{% block title %}{% trans "المستخدمون" %}{% endblock %}
 
 {% block content %}
 <div class="topbar glass">
   <div>
-    <h2>إدارة المستخدمين</h2>
-    <div class="sub">عرض المستخدمين وإضافة حسابات جديدة</div>
+    <h2>{% trans "إدارة المستخدمين" %}</h2>
+    <div class="sub">{% trans "عرض المستخدمين وإضافة حسابات جديدة" %}</div>
   </div>
   <div class="right">
-    <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></svg> {{ users|length }} مستخدم</span>
+    <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></svg> {{ users|length }} {% trans "مستخدم" %}</span>
     <a href="{% url 'user_create' %}" class="btn btn-primary">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-      مستخدم جديد
+      {% trans "مستخدم جديد" %}
     </a>
   </div>
 </div>
@@ -20,7 +20,7 @@
   <div class="rlt-scroll">
     <table class="rtable pro">
       <thead>
-        <tr><th>المستخدم</th><th>الاسم</th><th>الدور</th><th>البريد</th><th>الهاتف</th><th>الحالة</th></tr>
+        <tr><th>{% trans "المستخدم" %}</th><th>{% trans "الاسم" %}</th><th>{% trans "الدور" %}</th><th>{% trans "البريد" %}</th><th>{% trans "الهاتف" %}</th><th>{% trans "الحالة" %}</th></tr>
       </thead>
       <tbody>
         {% for u in users %}
@@ -30,7 +30,7 @@
           <td><span class="role-badge r-{{ u.role }}">{{ u.get_role_display }}</span></td>
           <td class="nowrap">{{ u.email|default:"—" }}</td>
           <td class="num nowrap">{{ u.phone|default:"—" }}</td>
-          <td>{% if u.is_active %}<span class="badge normal">نشط</span>{% else %}<span class="badge critical">موقوف</span>{% endif %}</td>
+          <td>{% if u.is_active %}<span class="badge normal">{% trans "نشط" %}</span>{% else %}<span class="badge critical">{% trans "موقوف" %}</span>{% endif %}</td>
         </tr>
         {% endfor %}
       </tbody>

@@ -9,4 +9,5 @@ urlpatterns = [
     path("rec/<int:pk>/edit/", views.rec_edit, name="rec_edit"),
     path("rec/<int:pk>/delete/", views.rec_delete, name="rec_delete"),
     path("alarm/<int:pk>/edit/", views.alarm_edit, name="alarm_edit"),
+    path("clarifier/<int:pk>/toggle/", views.clarifier_toggle, name="clarifier_toggle"),
 ]

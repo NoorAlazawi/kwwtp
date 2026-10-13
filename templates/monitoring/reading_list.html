@@ -1,27 +1,27 @@
 {% extends "base.html" %}
 {% load static %}
-{% load cachebust %}
-{% block title %}سجلّ القراءات وتعديلها{% endblock %}
+{% load cachebust %}{% load i18n %}
+{% block title %}{% trans "سجلّ القراءات وتعديلها" %}{% endblock %}
 
 {% block content %}
 <div class="topbar glass">
   <div>
-    <h2>سجلّ القراءات وتعديلها</h2>
-    <div class="sub">استعرض القراءات السابقة · عدّلها أو أضِف قراءة جديدة · تتبّع المؤشرات بيانياً</div>
+    <h2>{% trans "سجلّ القراءات وتعديلها" %}</h2>
+    <div class="sub">{% trans "استعرض القراءات السابقة · عدّلها أو أضِف قراءة جديدة · تتبّع المؤشرات بيانياً" %}</div>
   </div>
   <div class="right">
-    <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg> {{ count }} قراءة</span>
+    <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg> {{ count }} {% trans "قراءة" %}</span>
     <button type="button" class="btn btn-primary js-new-reading">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-      قراءة جديدة
+      {% trans "قراءة جديدة" %}
     </button>
   </div>
 </div>
 
 <div class="rl-filter glass">
-  <span class="rlf-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg> تصفية حسب الحوض</span>
+  <span class="rlf-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg> {% trans "تصفية حسب الحوض" %}</span>
   <div class="rlf-chips">
-    <a href="{% url 'reading_list' %}" class="chip {% if not sel %}on{% endif %}">الكل</a>
+    <a href="{% url 'reading_list' %}" class="chip {% if not sel %}on{% endif %}">{% trans "الكل" %}</a>
     {% for c in clarifiers %}
     <a href="?clarifier={{ c.number }}" class="chip {% if sel == c.number %}on{% endif %}" style="--cc:{{ c.ui_color }}">
       <span class="cdot" style="background:{{ c.ui_color }}"></span>{{ c.label }}
@@ -34,14 +34,14 @@
 <div class="card glass rl-chartcard">
   <div class="rlc-head">
     <div>
-      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg> اتجاه المؤشرات عبر الزمن</h3>
-      <p class="cap">القراءات المعروضة أدناه — اختر المؤشر</p>
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg> {% trans "اتجاه المؤشرات عبر الزمن" %}</h3>
+      <p class="cap">{% trans "القراءات المعروضة أدناه — اختر المؤشر" %}</p>
     </div>
     <div class="rlc-toggle" id="rlToggle">
       <button data-k="mlss" class="on">MLSS</button>
       <button data-k="svi">SVI</button>
-      <button data-k="blanket">طبقة الحمأة</button>
-      <button data-k="flow">التصريف Q</button>
+      <button data-k="blanket">{% trans "طبقة الحمأة" %}</button>
+      <button data-k="flow">{% trans "التصريف Q" %}</button>
     </div>
   </div>
   <div class="rlc-canvas"><canvas id="rlChart"></canvas></div>
@@ -49,19 +49,19 @@
 
 <div class="card glass rl-tablecard">
   <div class="rlt-head">
-    <h3>القراءات المُدخلة</h3>
+    <h3>{% trans "القراءات المُدخلة" %}</h3>
     <div class="rlt-search">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-      <input type="text" id="rlSearch" placeholder="ابحث بالتاريخ أو الحوض…">
+      <input type="text" id="rlSearch" placeholder="{% trans "ابحث بالتاريخ أو الحوض…" %}">
     </div>
   </div>
   <div class="rlt-scroll">
     <table class="rtable pro">
       <thead>
         <tr>
-          <th>التاريخ</th><th>الحوض</th><th>Q<small>م³/ي</small></th><th>MLSS</th>
-          <th>SV30</th><th>SVI</th><th>الحمأة<small>م</small></th><th>TSS خارج</th>
-          <th>CHI</th><th>المخاطر</th><th class="ta-c">إجراء</th>
+          <th>{% trans "التاريخ" %}</th><th>{% trans "الحوض" %}</th><th>Q<small>{% trans "م³/ي" %}</small></th><th>MLSS</th>
+          <th>SV30</th><th>SVI</th><th>{% trans "الحمأة" %}<small>{% trans "م" %}</small></th><th>TSS {% trans "خارج" %}</th>
+          <th>CHI</th><th>{% trans "المخاطر" %}</th><th class="ta-c">{% trans "إجراء" %}</th>
         </tr>
       </thead>
       <tbody id="rlBody">
@@ -78,7 +78,7 @@
           <td>{% if r.scores %}<span class="badge {% if r.scores.chi >= 85 %}normal{% elif r.scores.chi >= 70 %}warning{% else %}critical{% endif %}">{{ r.scores.chi|floatformat:0 }}</span>{% else %}—{% endif %}</td>
           <td>{% if r.scores %}<span class="badge {% if r.scores.cri <= 20 %}normal{% elif r.scores.cri <= 40 %}warning{% else %}critical{% endif %}">{{ r.scores.cri_level }}</span>{% else %}—{% endif %}</td>
           <td class="ta-c">
-            <button type="button" class="icon-btn js-edit-reading" data-pk="{{ r.id }}" title="تعديل القراءة">
+            <button type="button" class="icon-btn js-edit-reading" data-pk="{{ r.id }}" title="{% trans "تعديل القراءة" %}">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
             </button>
           </td>
@@ -86,21 +86,21 @@
         {% endfor %}
       </tbody>
     </table>
-    <div class="rlt-none" id="rlNone" hidden>لا توجد نتائج مطابقة للبحث.</div>
+    <div class="rlt-none" id="rlNone" hidden>{% trans "لا توجد نتائج مطابقة للبحث." %}</div>
   </div>
 
   {% if page_obj.paginator.num_pages > 1 %}
   <div class="pager">
     <div class="pager-info">
-      صفحة {{ page_obj.number }} من {{ page_obj.paginator.num_pages }}
-      <span>· {{ count }} قراءة إجمالاً</span>
+      {% trans "صفحة" %} {{ page_obj.number }} {% trans "من" %} {{ page_obj.paginator.num_pages }}
+      <span>· {{ count }} {% trans "قراءة إجمالاً" %}</span>
     </div>
     <div class="pager-btns">
       {% if page_obj.has_previous %}
-        <a class="pg" href="?{{ base_qs }}page=1" title="الأولى">«</a>
-        <a class="pg" href="?{{ base_qs }}page={{ page_obj.previous_page_number }}">‹ السابق</a>
+        <a class="pg" href="?{{ base_qs }}page=1" title="{% trans "الأولى" %}">«</a>
+        <a class="pg" href="?{{ base_qs }}page={{ page_obj.previous_page_number }}">‹ {% trans "السابق" %}</a>
       {% else %}
-        <span class="pg off">«</span><span class="pg off">‹ السابق</span>
+        <span class="pg off">«</span><span class="pg off">‹ {% trans "السابق" %}</span>
       {% endif %}
 
       {% for num in page_obj.paginator.page_range %}
@@ -112,10 +112,10 @@
       {% endfor %}
 
       {% if page_obj.has_next %}
-        <a class="pg" href="?{{ base_qs }}page={{ page_obj.next_page_number }}">التالي ›</a>
-        <a class="pg" href="?{{ base_qs }}page={{ page_obj.paginator.num_pages }}" title="الأخيرة">»</a>
+        <a class="pg" href="?{{ base_qs }}page={{ page_obj.next_page_number }}">{% trans "التالي" %} ›</a>
+        <a class="pg" href="?{{ base_qs }}page={{ page_obj.paginator.num_pages }}" title="{% trans "الأخيرة" %}">»</a>
       {% else %}
-        <span class="pg off">التالي ›</span><span class="pg off">»</span>
+        <span class="pg off">{% trans "التالي" %} ›</span><span class="pg off">»</span>
       {% endif %}
     </div>
   </div>
@@ -124,8 +124,8 @@
 {% else %}
 <div class="card glass empty">
   <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M9 12l2 2 4-4M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z"/></svg>
-  <p>لا توجد قراءات بعد لهذا الحوض. ابدأ بإضافة قراءة جديدة.</p>
-  <button type="button" class="btn btn-primary js-new-reading" style="margin-top:12px">قراءة جديدة</button>
+  <p>{% trans "لا توجد قراءات بعد لهذا الحوض. ابدأ بإضافة قراءة جديدة." %}</p>
+  <button type="button" class="btn btn-primary js-new-reading" style="margin-top:12px">{% trans "قراءة جديدة" %}</button>
 </div>
 {% endif %}
 
@@ -141,8 +141,8 @@
   const META = {
     mlss:   {label:'MLSS (mg/L)',      color:'#3b9db0'},
     svi:    {label:'SVI (mL/g)',       color:'#9a7fe0'},
-    blanket:{label:'طبقة الحمأة (م)',  color:'#e8a94a'},
-    flow:   {label:'التصريف Q (م³/ي)', color:'#4a90d9'},
+    blanket:{label:"{% trans 'طبقة الحمأة (م)' %}",  color:'#e8a94a'},
+    flow:   {label:"{% trans 'التصريف Q (م³/ي)' %}", color:'#4a90d9'},
   };
   const ctx = document.getElementById('rlChart');
   let key = 'mlss', chart;
