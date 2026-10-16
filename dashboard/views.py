@@ -19,7 +19,9 @@ def _gauge(value, good=True):
         color, text = (("#12b981", "#0b8f63") if v <= 20 else
                        ("#f5a524", "#b9760a") if v <= 40 else ("#f2545b", "#c33"))
     offset = CIRC - CIRC * min(v, 100) / 100
-    return {"value": round(v), "offset": round(offset, 1), "color": color, "text": text}
+    vr = round(v, 1)
+    val = int(vr) if vr == int(vr) else vr    # يعرض الكسر (مثل 12.5) ويحذف .0
+    return {"value": val, "offset": round(offset, 1), "color": color, "text": text}
 
 
 def _arc(value, vmin, vmax, zones):
@@ -353,7 +355,10 @@ def clarifier_toggle(request, pk):
     c = get_object_or_404(_Clarifier, pk=pk)
     c.is_active = not c.is_active
     c.save(update_fields=["is_active"])
-    nxt = request.POST.get("next") or f"/?clarifier={c.number}"
+    # لا بدّ أن تكون الوجهة مساراً داخلياً آمناً يبدأ بـ "/" (تفادي خطأ NoReverseMatch)
+    nxt = request.POST.get("next") or ""
+    if not nxt.startswith("/") or nxt.startswith("//"):
+        nxt = f"/?clarifier={c.number}"
     return redirect(nxt)
 
 

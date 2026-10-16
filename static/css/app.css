@@ -1011,6 +1011,29 @@ input[type=range].tr::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
 .toggle-basin.stop{background:linear-gradient(135deg,#e35d75,#b11232)}
 .toggle-basin.run{background:linear-gradient(135deg,#28b487,#0b8f63)}
 .toggle-basin:hover{transform:translateY(-1px);filter:brightness(1.07)}
+
+/* نافذة تأكيد مخصّصة */
+.confirm-modal{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:20px}
+.confirm-modal.open{display:flex}
+.cm-backdrop{position:absolute;inset:0;background:rgba(15,23,42,.45);backdrop-filter:blur(5px);animation:cmFade .2s ease}
+.cm-card{position:relative;width:min(430px,92vw);background:#fff;border-radius:22px;padding:30px 26px 22px;text-align:center;
+  box-shadow:0 30px 80px rgba(15,23,42,.33),0 2px 8px rgba(15,23,42,.12);animation:cmPop .26s cubic-bezier(.34,1.56,.64,1)}
+.cm-icon{width:66px;height:66px;border-radius:50%;margin:0 auto 18px;display:grid;place-items:center}
+.cm-icon svg{width:32px;height:32px;stroke-width:2.1}
+.cm-icon.danger{background:rgba(227,93,117,.14);color:#e35d75}
+.cm-icon.go{background:rgba(40,180,135,.14);color:#28b487}
+.cm-card h3{font-size:19px;font-weight:800;color:var(--ink,#1f2a44);margin:0 0 9px}
+.cm-card p{font-size:14px;line-height:1.75;color:var(--ink-2,#5a6d86);margin:0 0 24px}
+.cm-actions{display:flex;gap:11px}
+.cm-btn{flex:1;cursor:pointer;border:none;border-radius:13px;padding:12px 14px;font-family:'Cairo',sans-serif;font-size:14.5px;font-weight:800;transition:.15s}
+.cm-cancel{background:rgba(120,140,170,.14);color:var(--ink-2,#5a6d86)}
+.cm-cancel:hover{background:rgba(120,140,170,.24)}
+.cm-ok{color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.14)}
+.cm-ok.danger{background:linear-gradient(135deg,#e35d75,#b11232)}
+.cm-ok.go{background:linear-gradient(135deg,#28b487,#0b8f63)}
+.cm-ok:hover{transform:translateY(-1px);filter:brightness(1.08)}
+@keyframes cmFade{from{opacity:0}to{opacity:1}}
+@keyframes cmPop{from{opacity:0;transform:scale(.92) translateY(10px)}to{opacity:1;transform:none}}
 .basins-ref{margin-bottom:18px;border-radius:14px;overflow:hidden;box-shadow:var(--raise-sm);position:relative}
 .basins-ref img{width:100%;height:auto;display:block}
 .basins-ref-cap{position:absolute;bottom:0;left:0;right:0;padding:8px 14px;font-size:12px;font-weight:700;

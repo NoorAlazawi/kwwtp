@@ -57,7 +57,7 @@
 
 <div class="card glass basins-card">
   <div class="basins-head">
-    <div><h3>{% trans "حالة كل الأحواض" %}</h3><p class="cap">{% trans "لمحة سريعة ليوم" %} {{ end_date|date:'Y/m/d' }} — {% trans "انقر أي حوض لعرض تفاصيله" %}</p></div>
+    <div><h3>{% trans "حالة كل الأحواض" %}</h3><p class="cap">{% trans "لمحة سريعة ليوم" %} {{ end_date|date:'Y/m/d' }}</p></div>
     <span class="pill live"><span class="dot"></span> {{ basins_overview|length }} {% trans "أحواض" %}</span>
   </div>
   <div class="basins-grid">
@@ -119,12 +119,14 @@
         <div class="ch-txt">
           <h3>{% trans "حوض الترسيب الثانوي" %} <span class="ch-code" id="selBasinName" style="color:{{ sel_color }}">{{ sel_clarifier.label }}</span>
             {% if not sel_clarifier.is_active %}<span class="stopped-badge">⏸ {% trans "متوقف — مُستثنى من الحسابات" %}</span>{% endif %}</h3>
-          <p class="cap">{{ sel_clarifier.plant.name }} · {% trans "مؤشرات حيّة تُحدَّث من البيانات" %}</p>
-          <form method="post" action="{% url 'clarifier_toggle' sel_clarifier.pk %}" style="margin-top:8px">
+          <p class="cap">{{ sel_clarifier.plant.name }}</p>
+          <form method="post" action="{% url 'clarifier_toggle' sel_clarifier.pk %}" style="margin-top:8px" id="toggleForm">
             {% csrf_token %}
-            <input type="hidden" name="next" value="?clarifier={{ sel_clarifier.number }}&end={{ end_date|date:'Y-m-d' }}">
-            <button type="submit" class="toggle-basin {% if sel_clarifier.is_active %}stop{% else %}run{% endif %}"
-                    onclick="return confirm({% if sel_clarifier.is_active %}'{% trans "إيقاف هذا الحوض؟ سيُستثنى من كل الحسابات وإدخال القراءات حتى إعادة تشغيله." %}'{% else %}'{% trans "إعادة تشغيل هذا الحوض وإدراجه في الحسابات؟" %}'{% endif %});">
+            <input type="hidden" name="next" value="/?clarifier={{ sel_clarifier.number }}&end={{ end_date|date:'Y-m-d' }}">
+            <button type="button" id="basinToggleBtn" class="toggle-basin {% if sel_clarifier.is_active %}stop{% else %}run{% endif %}"
+                    data-kind="{% if sel_clarifier.is_active %}stop{% else %}run{% endif %}"
+                    data-title="{% if sel_clarifier.is_active %}{% trans "إيقاف الحوض" %}{% else %}{% trans "تشغيل الحوض" %}{% endif %}"
+                    data-msg="{% if sel_clarifier.is_active %}{% trans "إيقاف هذا الحوض؟ سيُستثنى من كل الحسابات وإدخال القراءات حتى إعادة تشغيله." %}{% else %}{% trans "إعادة تشغيل هذا الحوض وإدراجه في الحسابات؟" %}{% endif %}">
               {% if sel_clarifier.is_active %}⏸ {% trans "إيقاف الحوض" %}{% else %}▶ {% trans "تشغيل الحوض" %}{% endif %}
             </button>
           </form>
@@ -173,17 +175,17 @@
 
     <div class="flow-cards">
       <div class="flow-card">
-        <div class="fc-h" style="color:{{ sel_color }}">INFLUENT </div>
+        <div class="fc-h" style="color:{{ sel_color }}">INFLUENT</div>
         <div class="fc-r"><span>{% trans "التصريف" %}</span><b><span data-k="flow">{{ latest.flow_q|floatformat:0 }}</span> <small>{% trans "م³/د" %}</small></b></div>
         <div class="fc-r"><span>TSS</span><b><span data-k="tss_in">{{ latest.tss_in|floatformat:0 }}</span> <small>mg/L</small></b></div>
       </div>
       <div class="flow-card">
-        <div class="fc-h" style="color:#1f9e6f">EFFLUENT </div>
+        <div class="fc-h" style="color:#1f9e6f">EFFLUENT</div>
         <div class="fc-r"><span>{% trans "التصريف" %}</span><b><span data-k="eff">{{ latest.flow_q|floatformat:0 }}</span> <small>{% trans "م³/د" %}</small></b></div>
         <div class="fc-r"><span>TSS</span><b><span data-k="tss_out">{{ latest.tss_out|floatformat:0 }}</span> <small>mg/L</small></b></div>
       </div>
       <div class="flow-card">
-        <div class="fc-h" style="color:#c8860a">WAS — {% trans "سحب الحمأة" %}</div>
+        <div class="fc-h" style="color:#c8860a">{% trans "الحمأة" %}</div>
         <div class="fc-r"><span>WAS</span><b><span data-k="was">{{ m.qw_was|floatformat:0 }}</span> <small>{% trans "م³/د" %}</small></b></div>
         <div class="fc-r"><span>RAS</span><b><span data-k="ras">{{ m.qr_ras|floatformat:0 }}</span> <small>{% trans "م³/د" %}</small></b></div>
       </div>
@@ -204,7 +206,7 @@
     {{ basins_idx|json_script:"basinsIdx" }}
     <div class="gauges" id="compGauges">{% for g in gauges %}{% include "dashboard/_gauge.html" %}{% endfor %}</div>
     <div style="margin-top:16px;text-align:center;padding:12px;border-radius:14px;background:var(--primary-l)">
-      <span style="font-size:12px;color:var(--ink-2);font-weight:700">{% trans "تقييم حوض الترسيب الثانوي" %}</span>
+      <span style="font-size:12px;color:var(--ink-2);font-weight:700">{% trans "الأداء العام" %}</span>
       <div class="num" style="font-size:26px;font-weight:800;color:var(--primary-d);margin-top:2px"><span id="opScore">{{ s.operator_score|floatformat:0 }}</span><span style="font-size:14px;color:var(--ink-3)"> / 100</span></div>
     </div>
   </div>
@@ -326,6 +328,19 @@
     {% empty %}
     <div class="empty" style="padding:20px"><p>{% trans "لا توجد توصيات بعد — أضف أول توصية أعلاه." %}</p></div>
     {% endfor %}
+  </div>
+</div>
+
+<div class="confirm-modal" id="confirmModal" aria-hidden="true">
+  <div class="cm-backdrop" id="cmBackdrop"></div>
+  <div class="cm-card" role="dialog" aria-modal="true" aria-labelledby="cmTitle">
+    <div class="cm-icon" id="cmIcon"></div>
+    <h3 id="cmTitle"></h3>
+    <p id="cmMsg"></p>
+    <div class="cm-actions">
+      <button type="button" class="cm-btn cm-cancel" id="cmCancel">{% trans "إلغاء" %}</button>
+      <button type="button" class="cm-btn cm-ok" id="cmOk">{% trans "تأكيد" %}</button>
+    </div>
   </div>
 </div>
 {% endif %}
@@ -476,33 +491,33 @@ wireToggle('effToggle',()=>eChart);
 wireToggle('removalToggle',()=>rChart);
 setTimeout(play,1000);
 
-// تبديل {% trans "الفهارس المركّبة" %} فورياً عند اختيار حوض (بدون إعادة تحميل)
+// اختيار الحوض يُعيد تحميل الصفحة كاملةً فتتطابق كل التفاصيل (الفهارس، التقييم،
+// زر الإيقاف/التشغيل، شريط الحمأة، المقطع) مع الحوض المحدد.
+
+// نافذة تأكيد مخصّصة لإيقاف/تشغيل الحوض (بدل نافذة المتصفّح الافتراضية)
 (function(){
-  const el=document.getElementById('basinsIdx'); if(!el) return;
-  let IDX={}; try{IDX=JSON.parse(el.textContent);}catch(e){return;}
-  const gEls=document.querySelectorAll('#compGauges .gauge');
-  function applyGauge(g,d){
-    if(!g||!d) return;
-    const c=g.querySelectorAll('.ring circle'); if(c[1]){c[1].setAttribute('stroke',d.c);c[1].setAttribute('stroke-dashoffset',d.o);}
-    const num=g.querySelector('.num'); if(num) num.textContent=(d.v==null?'—':d.v);
-    const st=g.querySelector('.st'); if(st){st.textContent=d.s||'—';st.style.color=d.t;}
+  const btn=document.getElementById('basinToggleBtn');
+  const form=document.getElementById('toggleForm');
+  const modal=document.getElementById('confirmModal');
+  if(!btn||!form||!modal) return;
+  const elT=document.getElementById('cmTitle'), elM=document.getElementById('cmMsg'),
+        elI=document.getElementById('cmIcon'), elOk=document.getElementById('cmOk');
+  const SVG_STOP='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>';
+  const SVG_RUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8l6 4-6 4z"/></svg>';
+  function open(){
+    const kind=btn.dataset.kind;
+    elT.textContent=btn.dataset.title; elM.textContent=btn.dataset.msg;
+    elI.className='cm-icon '+(kind==='stop'?'danger':'go'); elI.innerHTML=(kind==='stop'?SVG_STOP:SVG_RUN);
+    elOk.className='cm-btn cm-ok '+(kind==='stop'?'danger':'go');
+    modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
   }
-  function selectBasin(bn,href){
-    const d=IDX[bn]; if(!d) return false;
-    applyGauge(gEls[0],d.chi); applyGauge(gEls[1],d.csi); applyGauge(gEls[2],d.cri);
-    const op=document.getElementById('opScore'); if(op) op.textContent=(d.op==null?'—':d.op);
-    const nm=document.getElementById('selBasinName'); if(nm) nm.textContent=d.name;
-    document.querySelectorAll('.basin-chip').forEach(c=>c.classList.toggle('sel',c.dataset.bn===String(bn)));
-    if(href) history.replaceState(null,'',href);
-    return true;
-  }
-  document.querySelectorAll('.basin-chip').forEach(ch=>{
-    ch.addEventListener('click',function(e){
-      const bn=this.dataset.bn; if(!bn||!IDX[bn]) return;   // بلا بيانات → تحميل عادي
-      e.preventDefault();
-      selectBasin(bn,this.getAttribute('href'));
-    });
-  });
+  function close(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
+  btn.addEventListener('click',open);
+  document.getElementById('cmCancel').addEventListener('click',close);
+  document.getElementById('cmBackdrop').addEventListener('click',close);
+  elOk.addEventListener('click',function(){ elOk.disabled=true; form.submit(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&modal.classList.contains('open')) close(); });
 })();
 </script>
 {% endif %}

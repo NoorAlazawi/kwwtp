@@ -648,3 +648,6 @@ msgstr "Fair"
 
 msgid "Poor"
 msgstr "Poor"
+
+msgid "تأكيد"
+msgstr "Confirm"
