@@ -50,16 +50,21 @@
 <div class="card glass rl-tablecard">
   <div class="rlt-head">
     <h3>{% trans "القراءات المُدخلة" %}</h3>
+    <button type="button" id="rlDelBtn" class="btn rl-del-btn" disabled>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+      {% trans "حذف المحدّد" %} (<span id="rlDelCount">0</span>)
+    </button>
     <div class="rlt-search">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
       <input type="text" id="rlSearch" placeholder="{% trans "ابحث بالتاريخ أو الحوض…" %}">
     </div>
   </div>
   <div class="rlt-scroll">
+    <form id="rlDelForm" method="post" action="{% url 'reading_delete' %}">{% csrf_token %}<input type="hidden" name="clarifier" value="{{ sel|default_if_none:'' }}">
     <table class="rtable pro">
       <thead>
         <tr>
-          <th>{% trans "التاريخ" %}</th><th>{% trans "الحوض" %}</th><th>Q<small>{% trans "م³/ي" %}</small></th><th>MLSS</th>
+          <th class="ta-c"><input type="checkbox" id="rlCheckAll" title="{% trans "تحديد الكل" %}"></th><th>{% trans "التاريخ" %}</th><th>{% trans "الحوض" %}</th><th>Q<small>{% trans "م³/ي" %}</small></th><th>MLSS</th>
           <th>SV30</th><th>SVI</th><th>{% trans "الحمأة" %}<small>{% trans "م" %}</small></th><th>TSS {% trans "خارج" %}</th>
           <th>CHI</th><th>{% trans "المخاطر" %}</th><th class="ta-c">{% trans "إجراء" %}</th>
         </tr>
@@ -67,6 +72,7 @@
       <tbody id="rlBody">
         {% for r in readings %}
         <tr data-search="{{ r.date }} {{ r.clarifier.label }}">
+          <td class="ta-c"><input type="checkbox" class="rl-check" name="ids" value="{{ r.id }}"></td>
           <td class="num nowrap">{{ r.date|date:'Y/m/d' }}</td>
           <td class="nowrap"><span class="cdot" style="background:{{ r.clarifier.ui_color }}"></span>{{ r.clarifier.label }}</td>
           <td class="num">{{ r.flow_q|floatformat:0 }}</td>
@@ -86,6 +92,7 @@
         {% endfor %}
       </tbody>
     </table>
+    </form>
     <div class="rlt-none" id="rlNone" hidden>{% trans "لا توجد نتائج مطابقة للبحث." %}</div>
   </div>
 
@@ -129,6 +136,24 @@
 </div>
 {% endif %}
 
+<div class="confirm-modal" id="rlConfirm" aria-hidden="true">
+  <div class="cm-backdrop" id="rlcmBackdrop"></div>
+  <div class="cm-card" role="dialog" aria-modal="true" aria-labelledby="rlcmTitle">
+    <div class="cm-icon danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg></div>
+    <h3 id="rlcmTitle">{% trans "تأكيد الحذف" %}</h3>
+    <p id="rlcmMsg"></p>
+    <div class="cm-actions">
+      <button type="button" class="cm-btn cm-cancel" id="rlcmCancel">{% trans "إلغاء" %}</button>
+      <button type="button" class="cm-btn cm-ok danger" id="rlcmOk">{% trans "حذف" %}</button>
+    </div>
+  </div>
+</div>
+<style>
+.rlt-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.rl-del-btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#e35d75,#b11232);color:#fff;border:none}
+.rl-del-btn[disabled]{opacity:.45;cursor:not-allowed;filter:grayscale(.25)}
+.rl-check,#rlCheckAll{width:17px;height:17px;cursor:pointer;accent-color:#1f2a78}
+</style>
 {{ chart|json_script:"rlData" }}
 {% endblock %}
 
@@ -186,6 +211,41 @@
     rows.forEach(r=>{ const ok = r.dataset.search.toLowerCase().includes(q); r.hidden=!ok; if(ok) vis++; });
     none.hidden = vis>0;
   });
+})();
+
+/* حذف متعدّد للقراءات */
+(function(){
+  var form=document.getElementById('rlDelForm'); if(!form) return;
+  var checks=[].slice.call(document.querySelectorAll('.rl-check'));
+  var all=document.getElementById('rlCheckAll');
+  var btn=document.getElementById('rlDelBtn');
+  var cnt=document.getElementById('rlDelCount');
+  var modal=document.getElementById('rlConfirm');
+  var msg=document.getElementById('rlcmMsg');
+  function sel(){ return checks.filter(function(c){ return c.checked && !c.closest('tr').hidden; }); }
+  function refresh(){
+    var n=sel().length; cnt.textContent=n; btn.disabled=(n===0);
+    if(all){ var vis=checks.filter(function(c){ return !c.closest('tr').hidden; });
+      all.checked = vis.length>0 && vis.every(function(c){ return c.checked; }); }
+  }
+  checks.forEach(function(c){ c.addEventListener('change',refresh); });
+  if(all) all.addEventListener('change',function(){
+    checks.forEach(function(c){ if(!c.closest('tr').hidden) c.checked=all.checked; }); refresh();
+  });
+  var srch=document.getElementById('rlSearch');
+  if(srch) srch.addEventListener('input',function(){ setTimeout(refresh,0); });
+  function openM(){ var n=sel().length; if(!n) return;
+    msg.textContent='{% trans "سيتم حذف" %} '+n+' {% trans "قراءة نهائياً. لا يمكن التراجع." %}';
+    modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); }
+  function closeM(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }
+  btn.addEventListener('click',openM);
+  document.getElementById('rlcmCancel').addEventListener('click',closeM);
+  var bd=document.getElementById('rlcmBackdrop'); if(bd) bd.addEventListener('click',closeM);
+  document.getElementById('rlcmOk').addEventListener('click',function(){
+    checks.forEach(function(c){ if(c.closest('tr').hidden) c.checked=false; });
+    this.disabled=true; form.submit();
+  });
+  refresh();
 })();
 </script>
 {% endif %}

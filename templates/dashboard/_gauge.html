@@ -9,7 +9,7 @@
               stroke-dasharray="276.46" stroke-dashoffset="{{ g.offset }}"/>
     </svg>
     <div class="mid">
-      <b class="num">{{ g.value|default:"—" }}</b>
+      <b class="num">{% if g.value is not None %}{{ g.value }}{% else %}—{% endif %}</b>
       <s>/ 100</s>
     </div>
   </div>

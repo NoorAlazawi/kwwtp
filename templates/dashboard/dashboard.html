@@ -272,7 +272,7 @@
     <table class="diag"><thead><tr><th>{% trans "المؤشر" %}</th><th>{% trans "القيمة" %}</th><th>{% trans "الحالة" %}</th><th>{% trans "الإجراء" %}</th></tr></thead><tbody>
       {% for d in diagnoses %}<tr>
         <td class="p">{{ d.parameter.name_ar }}<div style="font-size:10px;color:var(--ink-3)">{{ d.parameter.code }}</div></td>
-        <td class="v">{{ d.value|floatformat:2 }} <span style="font-size:10px;color:var(--ink-3)">{{ d.parameter.unit }}</span></td>
+        <td class="v">{{ d.value|floatformat:0 }} <span style="font-size:10px;color:var(--ink-3)">{{ d.parameter.unit }}</span></td>
         <td><span class="badge {{ d.status }}">{{ d.get_status_display }}</span></td>
         <td style="color:var(--ink-2);line-height:1.5">{{ d.action }}</td>
       </tr>{% endfor %}
@@ -331,6 +331,17 @@
   </div>
 </div>
 
+<div id="recalcOverlay" class="recalc-overlay" aria-hidden="true">
+  <div class="recalc-box"><div class="recalc-spin"></div><div class="recalc-txt">{% trans "جارٍ إعادة الاحتساب…" %}</div></div>
+</div>
+<style>
+.recalc-overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:99999}
+.recalc-overlay.show{display:flex}
+.recalc-box{background:#fff;border-radius:16px;padding:26px 36px;box-shadow:0 20px 60px rgba(0,0,0,.28);display:flex;flex-direction:column;align-items:center;gap:14px}
+.recalc-spin{width:46px;height:46px;border:4px solid #e0e6ef;border-top-color:#1f2a78;border-radius:50%;animation:recalcSpin .8s linear infinite}
+.recalc-txt{font-family:'Cairo',sans-serif;font-weight:700;color:#1f2a78;font-size:15px}
+@keyframes recalcSpin{to{transform:rotate(360deg)}}
+</style>
 <div class="confirm-modal" id="confirmModal" aria-hidden="true">
   <div class="cm-backdrop" id="cmBackdrop"></div>
   <div class="cm-card" role="dialog" aria-modal="true" aria-labelledby="cmTitle">
@@ -422,13 +433,21 @@ function buildCharts(){
 
   // المخطط الأول: SVI (محور يسار) + طبقة الحمأة (محور يمين) — حدودهما مختلفة
   const tc=document.getElementById('trend').getContext('2d');
+  // إظهار/إخفاء المحور مع سلسلته (SVI=ي / الحمأة=y1)
+  const trendLegend=Object.assign({},legend,{onClick:function(e,item,leg){
+    const ci=leg.chart, i=item.datasetIndex;
+    ci.setDatasetVisibility(i, !ci.isDatasetVisible(i));
+    ci.options.scales.y.display  = ci.isDatasetVisible(0);
+    ci.options.scales.y1.display = ci.isDatasetVisible(1);
+    ci.update();
+  }});
   tChart=new Chart(tc,{type:'line',
     data:{labels:D.dates,datasets:[
       {label:'SVI',dsKey:'svi',data:D.svi,borderColor:'#2fb3b0',pointBackgroundColor:'#2fb3b0',backgroundColor:'rgba(38,208,206,.14)',borderWidth:2.5,tension:.4,pointRadius:3,fill:true,shadowColor:'rgba(47,179,176,.5)'},
       {label:"{% trans 'طبقة الحمأة (م)' %}",dsKey:'blk',data:D.blanket,borderColor:'#9a7fe0',pointBackgroundColor:'#9a7fe0',backgroundColor:'rgba(200,162,255,.10)',borderWidth:2.5,tension:.4,pointRadius:3,fill:true,yAxisID:'y1',shadowColor:'rgba(154,127,224,.45)'},
     ]},
     options:{responsive:true,maintainAspectRatio:false,resizeDelay:120,animation:{duration:700},
-      plugins:{legend:legend,tooltip:tip},
+      plugins:{legend:trendLegend,tooltip:tip},
       scales:{y:{...ax,min:0,max:300,title:{display:true,text:'SVI (mL/g)',color:'#5a6d86',font:{family:'Cairo',size:10}}},
               y1:{position:'right',min:0,max:1.6,grid:{drawOnChartArea:false},title:{display:true,text:"{% trans 'طبقة الحمأة (م)' %}",color:'#7a6ad9',font:{family:'Cairo',size:10}},ticks:{color:'#7a6ad9',font:{family:'Oxanium',size:10}}},
               x:{...ax,grid:{display:false}}}},
@@ -470,6 +489,10 @@ function wireToggle(btnGroupId, chartGetter){
     grp.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===e.target));
     const ch=chartGetter(); if(!ch) return;
     ch.data.datasets.forEach(ds=>{ ds.hidden=(sel!=='all')&&(ds.dsKey!==sel); });
+    if(ch.options.scales.y1){   // المخطط ذو المحورين
+      ch.options.scales.y.display  = ch.isDatasetVisible(0);
+      ch.options.scales.y1.display = ch.isDatasetVisible(1);
+    }
     ch.update();
   });
 }
@@ -516,7 +539,7 @@ setTimeout(play,1000);
   btn.addEventListener('click',open);
   document.getElementById('cmCancel').addEventListener('click',close);
   document.getElementById('cmBackdrop').addEventListener('click',close);
-  elOk.addEventListener('click',function(){ elOk.disabled=true; form.submit(); });
+  elOk.addEventListener('click',function(){ elOk.disabled=true; var ov=document.getElementById('recalcOverlay'); if(ov) ov.classList.add('show'); form.submit(); });
   document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&modal.classList.contains('open')) close(); });
 })();
 </script>

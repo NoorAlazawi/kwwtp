@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.views.decorators.http import require_POST
 from .forms import DailyReadingForm, BulkReadingForm
 from .models import DailyReading, Clarifier
 
@@ -221,3 +222,22 @@ def reading_list(request):
         "chart": chart, "count": total,
         "page_obj": page_obj, "base_qs": base_qs,
     })
+
+
+@login_required
+@require_POST
+def reading_delete(request):
+    """حذف قراءة واحدة أو أكثر (تحديد متعدّد)."""
+    ids = [int(i) for i in request.POST.getlist("ids") if str(i).isdigit()]
+    deleted = 0
+    if ids:
+        DailyReading.objects.filter(id__in=ids).delete()
+        deleted = len(ids)
+    sel = request.POST.get("clarifier") or ""
+    if _is_ajax(request):
+        return JsonResponse({"ok": True, "deleted": deleted})
+    messages.success(request, f"تم حذف {deleted} قراءة.")
+    base = reverse("reading_list")
+    if sel.isdigit():
+        return redirect(f"{base}?clarifier={sel}")
+    return redirect(base)

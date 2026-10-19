@@ -351,11 +351,35 @@ def alarm_edit(request, pk):
 @_login_required
 @require_POST
 def clarifier_toggle(request, pk):
-    """إيقاف/تشغيل حوض — المتوقّف يُستثنى من كل الحسابات والعمليات."""
+    """إيقاف/تشغيل حوض — المتوقّف يُستثنى من كل الحسابات.
+    عند التبديل: يُعاد توزيع التصريف الكلّي لأحدث يوم على الأحواض
+    الشغّالة وتُعاد احتساب مؤشراتها (الإجمالي محفوظ)."""
+    from django.db.models import Max, Sum
     c = get_object_or_404(_Clarifier, pk=pk)
+    plant = c.plant
+    # أحدث يوم فيه قراءات لهذه المحطة
+    latest = (DailyReading.objects.filter(clarifier__plant=plant)
+              .aggregate(d=Max("date"))["d"])
+    # التصريف الكلّي = مجموع تصاريف الأحواض الشغّالة حالياً (قبل التبديل)
+    q_total = None
+    if latest:
+        q_total = (DailyReading.objects
+                   .filter(clarifier__plant=plant, clarifier__is_active=True, date=latest)
+                   .aggregate(s=Sum("flow_q"))["s"])
+    # تبديل حالة الحوض
     c.is_active = not c.is_active
     c.save(update_fields=["is_active"])
-    # لا بدّ أن تكون الوجهة مساراً داخلياً آمناً يبدأ بـ "/" (تفادي خطأ NoReverseMatch)
+    # إعادة التوزيع والاحتساب على الأحواض الشغّالة — لأحدث يوم فقط
+    if latest and q_total:
+        # قراءات أحدث يوم للأحواض الشغّالة فقط (بعد التبديل)
+        rows = list(DailyReading.objects.filter(
+            clarifier__plant=plant, clarifier__is_active=True, date=latest))
+        if rows:
+            per = round(q_total / len(rows), 2)
+            for r in rows:
+                r.flow_q = per
+                r.save(update_fields=["flow_q"])   # post_save -> إعادة احتساب المؤشرات
+    # وجهة آمنة تبدأ بـ "/"
     nxt = request.POST.get("next") or ""
     if not nxt.startswith("/") or nxt.startswith("//"):
         nxt = f"/?clarifier={c.number}"
