@@ -79,7 +79,7 @@
           <td class="num">{{ r.mlss|floatformat:0 }}</td>
           <td class="num">{{ r.sv30|floatformat:0 }}</td>
           <td class="num">{% if r.metric %}{{ r.metric.svi|floatformat:0 }}{% else %}—{% endif %}</td>
-          <td class="num">{{ r.sludge_blanket|floatformat:2 }}</td>
+          <td class="num">{{ r.sludge_blanket|floatformat:"2u" }}</td>
           <td class="num">{{ r.tss_out|floatformat:0 }}</td>
           <td>{% if r.scores %}<span class="badge {% if r.scores.chi >= 85 %}normal{% elif r.scores.chi >= 70 %}warning{% else %}critical{% endif %}">{{ r.scores.chi|floatformat:0 }}</span>{% else %}—{% endif %}</td>
           <td>{% if r.scores %}<span class="badge {% if r.scores.cri <= 20 %}normal{% elif r.scores.cri <= 40 %}warning{% else %}critical{% endif %}">{{ r.scores.cri_level }}</span>{% else %}—{% endif %}</td>

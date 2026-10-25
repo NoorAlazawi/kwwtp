@@ -228,13 +228,13 @@ body{font-family:'Cairo',sans-serif;color:var(--ink);min-height:100vh;padding:18
     </div>
     <div class="bc-metrics">
       <div><span>SVI</span><b>{{ b.svi|default:"—" }}</b></div>
-      <div><span>SOR</span><b>{{ b.sor|default:"—" }}</b></div>
-      <div><span>SLR</span><b>{{ b.slr|default:"—" }}</b></div>
-      <div><span>HRT</span><b>{{ b.hrt|default:"—" }}</b></div>
+      <div><span>SOR</span><b>{{ b.sor|floatformat:"-2u"|default:"—" }}</b></div>
+      <div><span>SLR</span><b>{{ b.slr|floatformat:"-2u"|default:"—" }}</b></div>
+      <div><span>HRT</span><b>{{ b.hrt|floatformat:"-2u"|default:"—" }}</b></div>
     </div>
     <div class="bc-blanket" style="color:{{ b.bcol }}">
       <span class="d" style="background:{{ b.bcol }}"></span>
-      {% trans "طبقة الحمأة" %} {{ b.blanket }} {% trans "م" %} · {% trans b.bstate %}
+      {% trans "طبقة الحمأة" %} {{ b.blanket|floatformat:"-2u" }} {% trans "م" %} · {% trans b.bstate %}
     </div>
     <div class="bc-op">
       <span class="lbl">{% trans "تقييم الحوض" %}</span>

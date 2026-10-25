@@ -81,7 +81,7 @@
       </div>
       <div class="bc-blanket" style="color:{{ b.bcol }}">
         <span class="bc-dot" style="background:{{ b.bcol }}"></span>
-        {% trans "طبقة الحمأة" %} {{ b.blanket }}{% trans "م" %} · {% trans b.bstate %}
+        {% trans "طبقة الحمأة" %} {{ b.blanket|floatformat:"-2u" }}{% trans "م" %} · {% trans b.bstate %}
       </div>
       {% else %}
       <div class="bc-top"><span class="bc-num" style="color:{{ b.color }}">{{ b.label }}{% if b.is_selected %}<span class="bc-sel">● {% trans "المعروض" %}</span>{% endif %}</span></div>
@@ -96,7 +96,7 @@
   <div class="kpi glass"><div class="ico t-c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg></div><div class="lbl">{% trans "التصريف الداخل" %}</div><div class="val num"><span data-k="flow">{{ latest.flow_q|floatformat:0 }}</span> <small>{% trans "م³/يوم" %}</small></div></div>
   <div class="kpi glass"><div class="ico t-c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 12h18"/></svg></div><div class="lbl">MLSS</div><div class="val num"><span data-k="mlss">{{ latest.mlss|floatformat:0 }}</span> <small>mg/L</small></div></div>
   <div class="kpi glass"><div class="ico t-c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg></div><div class="lbl">SVI</div><div class="val num"><span data-k="svi">{{ m.svi|floatformat:0 }}</span> <small>mL/g</small></div></div>
-  <div class="kpi glass"><div class="ico t-c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18M3 12h18M3 17h18"/></svg></div><div class="lbl">{% trans "طبقة الحمأة" %}</div><div class="val num"><span data-k="blanket">{{ latest.sludge_blanket|floatformat:2 }}</span> <small>{% trans "م" %}</small></div></div>
+  <div class="kpi glass"><div class="ico t-c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18M3 12h18M3 17h18"/></svg></div><div class="lbl">{% trans "طبقة الحمأة" %}</div><div class="val num"><span data-k="blanket">{{ latest.sludge_blanket|floatformat:"2u" }}</span> <small>{% trans "م" %}</small></div></div>
 </div>
 
 <div class="timebar glass">
@@ -156,7 +156,7 @@
         <div class="surface-ping" style="left:50%;top:30%"></div>
 
         <div class="blanket-gauge">
-          <div class="bg-title">{% trans "طبقة الحمأة" %}<br><b><span data-k="blanket">{{ latest.sludge_blanket|floatformat:2 }}</span> {% trans "م" %}</b></div>
+          <div class="bg-title">{% trans "طبقة الحمأة" %}<br><b><span data-k="blanket">{{ latest.sludge_blanket|floatformat:"2u" }}</span> {% trans "م" %}</b></div>
           <div class="bg-body">
             <div class="bg-scale"><span>2.0</span><span>1.5</span><span>1.0</span><span>0.5</span><span>0</span></div>
             <div class="bg-tube">
@@ -189,9 +189,9 @@
       </div>
       <div class="flow-card">
         <div class="fc-h" style="color:#4a90d9">{% trans "كفاءة الإزالة" %}</div>
-        <div class="fc-r"><span>TSS</span><b><span data-k="tss_rem">{{ m.tss_removal|floatformat:1 }}</span> <small>%</small></b></div>
-        <div class="fc-r"><span>COD</span><b><span data-k="cod_rem">{{ m.cod_removal|floatformat:1 }}</span> <small>%</small></b></div>
-        <div class="fc-r"><span>BOD</span><b><span data-k="bod_rem">{{ m.bod_removal|floatformat:1 }}</span> <small>%</small></b></div>
+        <div class="fc-r"><span>TSS</span><b><span data-k="tss_rem">{{ m.tss_removal|floatformat:"1u" }}</span> <small>%</small></b></div>
+        <div class="fc-r"><span>COD</span><b><span data-k="cod_rem">{{ m.cod_removal|floatformat:"1u" }}</span> <small>%</small></b></div>
+        <div class="fc-r"><span>BOD</span><b><span data-k="bod_rem">{{ m.bod_removal|floatformat:"1u" }}</span> <small>%</small></b></div>
       </div>
     </div>
   </div>
@@ -222,7 +222,7 @@
         <circle cx="60" cy="55" r="4" fill="var(--ink)"/>
       </svg>
       <div class="lbl">{{ a.label }}</div>
-      <div class="val" style="color:{{ a.color }}">{{ a.value }}</div>
+      <div class="val" style="color:{{ a.color }}">{% if a.label == "SOR" or a.label == "SLR" or a.label == "HRT" %}{{ a.value|floatformat:0 }}{% else %}{{ a.value|floatformat:"2u" }}{% endif %}</div>
       <div class="rng">({{ a.range }}) {{ a.unit }}</div>
     </div>
     {% endfor %}
@@ -270,7 +270,7 @@
     <table class="diag"><thead><tr><th>{% trans "المؤشر" %}</th><th>{% trans "القيمة" %}</th><th>{% trans "الحالة" %}</th><th>{% trans "الإجراء" %}</th></tr></thead><tbody>
       {% for d in diagnoses %}<tr>
         <td class="p">{{ d.parameter.name_ar }}<div style="font-size:10px;color:var(--ink-3)">{{ d.parameter.code }}</div></td>
-        <td class="v">{% if d.parameter.code == "SVI" or d.parameter.code == "SOR" or d.parameter.code == "SLR" or d.parameter.code == "HRT" %}{{ d.value|floatformat:0 }}{% else %}{{ d.value|floatformat:2 }}{% endif %} <span style="font-size:10px;color:var(--ink-3)">{{ d.parameter.unit }}</span></td>
+        <td class="v">{% if d.parameter.code == "SVI" or d.parameter.code == "SOR" or d.parameter.code == "SLR" or d.parameter.code == "HRT" %}{{ d.value|floatformat:0 }}{% else %}{{ d.value|floatformat:"2u" }}{% endif %} <span style="font-size:10px;color:var(--ink-3)">{{ d.parameter.unit }}</span></td>
         <td><span class="badge {{ d.status }}">{{ d.get_status_display }}</span></td>
         <td style="color:var(--ink-2);line-height:1.5">{{ d.action }}</td>
       </tr>{% endfor %}
@@ -384,7 +384,7 @@ function render(){
     const fr=Math.max(0,Math.min(1,(v-cfg.min)/(cfg.max-cfg.min)));
     const ang=180*fr, col2=arcColor(v,cfg.z);
     el.querySelector('.needle').setAttribute('transform',`rotate(${ang-90} 60 55)`);
-    el.querySelector('.val').textContent=v.toFixed(2);
+    el.querySelector('.val').textContent=Math.round(v);
     el.querySelector('.val').style.color=col2;
     const arc=el.querySelector('path[stroke-dasharray]');
     arc.setAttribute('stroke',col2);
