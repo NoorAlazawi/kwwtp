@@ -14,10 +14,12 @@ class BulkReadingForm(forms.ModelForm):
             "mlss", "sv30", "do", "temperature",
             "tss_in", "tss_out", "cod_in", "cod_out", "bod_in", "bod_out", "ph",
         ]
-        widgets = {"date": forms.DateInput(attrs={"type": "date"})}
+        widgets = {"date": forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d")}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # يضمن أن حقل التاريخ يُعرض ويُقبل بصيغة YYYY-MM-DD (يتوافق مع input type=date)
+        self.fields["date"].input_formats = ["%Y-%m-%d"]
         hints = {
             "flow_q": "التصريف الكلّي للمحطة (م³/يوم) — يُقسَّم على ٨ تلقائياً",
             "ras_percent": "نسبة % فقط (25–100) — ليست Qr",
@@ -41,11 +43,13 @@ class DailyReadingForm(forms.ModelForm):
             "tss_in", "tss_out", "cod_in", "cod_out", "bod_in", "bod_out", "ph",
         ]
         widgets = {
-            "date": forms.DateInput(attrs={"type": "date"}),
+            "date": forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # يضمن أن حقل التاريخ يُعرض مُعبّأً ويُقبل بصيغة YYYY-MM-DD (يتوافق مع input type=date)
+        self.fields["date"].input_formats = ["%Y-%m-%d"]
         # تلميحات إرشادية للحقول المُلتبسة (لمنع إدخال الأعمدة المحسوبة بالخطأ)
         hints = {
             "flow_q": "تصريف الحوض الواحد (م³/يوم)",
